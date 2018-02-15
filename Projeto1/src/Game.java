@@ -1,10 +1,11 @@
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Random;
 
 public class Game 
 {
-	public static void main(String[] args) 
-	{
+	
+	public static int level1() {
 		Scanner s = new Scanner(System.in);
 
 		char[][] map = { {'X','X','X','X','X','X','X','X','X','X'},
@@ -108,8 +109,7 @@ public class Game
 
 		System.out.print("\n\n\n\n\n\n\n");
 
-		for(int i = 0; i < map.length; i++)
-		{	
+		for(int i = 0; i < map.length; i++) {	
 			System.out.println(Arrays.toString(map[i]));
 		}
 
@@ -117,10 +117,163 @@ public class Game
 
 		if(flag == 0)
 			System.out.println("GameOver!");
-
-		else if(flag == 1)
-			System.out.println("You Won!");
 		
 		s.close();
+		
+		return flag;
+	}
+	
+	public static int level2() {
+		Scanner s = new Scanner(System.in);
+		
+		Random rng = new Random();
+
+		char[][] map = { 
+				{'X','X','X','X','X','X','X','X','X'},
+				{'I',' ',' ',' ','O',' ',' ','k','X'},
+				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X','H',' ',' ',' ',' ',' ',' ','X'},
+				{'X','X','X','X','X','X','X','X','X'} 
+		};
+		
+		int flag = -1;
+		
+		int xpos = 1;
+		int ypos = 7;
+		int xspeed = 0;
+		int yspeed = 0;
+		
+		int oxpos = 4;
+		int oypos = 1;
+		
+		char player = 'H';
+		
+		while(flag == -1)
+		{	
+			System.out.print("\n\n\n\n\n\n\n");
+
+			for(int i = 0; i < map.length; i++)
+			{	
+				System.out.println(Arrays.toString(map[i]));
+			}
+
+			System.out.print("\n\n\n\n\n\n\n");
+
+			System.out.print("Enter a character to move: ");
+
+			char dir = s.next().charAt(0);
+
+			switch(dir)
+			{
+			case 'w':
+			case 'W': xspeed = 0; yspeed = -1; break;
+
+			case 'a':
+			case 'A': xspeed = -1; yspeed = 0; break;
+
+			case 's':
+			case 'S': xspeed = 0; yspeed = 1; break;
+
+			case 'd':
+			case 'D': xspeed = 1; yspeed = 0; break;
+
+			case 'q':
+			case 'Q': flag = 0; continue;
+			
+			default: continue;
+			}
+			
+			if (map[ypos + yspeed][xpos + xspeed] == 'S')
+				flag = 1;
+			
+			if (map[ypos + yspeed][xpos + xspeed] == 'I' && player == 'K') {
+				map[ypos + yspeed][xpos + xspeed] = 'S';
+			}
+			
+			if (map[ypos + yspeed][xpos + xspeed] != 'X' && map[ypos + yspeed][xpos + xspeed] != 'I')
+			{
+				if(map[ypos + yspeed][xpos + xspeed] == 'k')
+					player = 'K';
+
+				map[ypos][xpos] = ' ';
+				map[ypos + yspeed][xpos + xspeed] = player;
+				
+				xpos += xspeed;
+				ypos += yspeed;
+				
+				int r1;
+				int r2;
+
+				boolean randomFlag = true;
+				
+				while (randomFlag) {
+				
+					r1 = rng.nextInt(2);
+					r2 = rng.nextInt(2);
+					
+					System.out.println(r1);
+					System.out.println(r2);
+					
+					int mov = 1;
+					
+					if (r2 == 0)
+						mov = -1;
+					
+					if (r1 == 0) {
+						if (map[oypos + mov][oxpos] == ' ') {
+							
+							randomFlag = false;
+							
+							map[oypos][oxpos] = ' ';
+							map[oypos + mov][oxpos] = 'O';
+							oypos += mov;
+							
+						}	
+					} else {
+						if (map[oypos][oxpos + mov] == ' ') {
+							
+							randomFlag = false;
+							
+							map[oypos][oxpos] = ' ';
+							map[oypos][oxpos + mov] = 'O';
+							oxpos += mov;
+							
+						}
+					}
+				}
+				
+				if ((Math.abs(oypos - ypos) == 1 && oxpos == xpos) || (Math.abs(oxpos - xpos) == 1 && oypos == ypos))
+					flag = 0;
+				
+			}
+			
+		}
+		
+		System.out.print("\n\n\n\n\n\n\n");
+
+		for(int i = 0; i < map.length; i++) {	
+			System.out.println(Arrays.toString(map[i]));
+		}
+
+		System.out.print("\n\n\n\n\n\n\n");
+
+		if(flag == 0)
+			System.out.println("GameOver!");
+		
+		s.close();
+		
+		return flag;
+		
+	}
+	
+	public static void main(String[] args) 
+	{
+		//if (level1() == 1)
+			if (level2() == 1);
+			System.out.println("¡Fuerte chico!");
 	}
 }
