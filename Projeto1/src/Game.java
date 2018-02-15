@@ -17,16 +17,21 @@ public class Game
 				{'X','X','X',' ','X','X','X','X',' ','X'},
 				{'X',' ','I',' ','I',' ','X','k',' ','X'},
 				{'X','X','X','X','X','X','X','X','X','X'} };
+		
+		char[] movg = {'a','s','s','s','s','a','a','a','a','a','a','s','d','d','d','d','d','d','d','w','w','w','w','w'};
 
 		int xpos = 1;
 		int ypos = 1;
 		int xspeed = 0;
 		int yspeed = 0;
 
-		int gx = 8;
-		int gy = 1;
+		int gxpos = 8;
+		int gypos = 1;
+		int gxspeed = 0;
+		int gyspeed = 0;
 
 		int flag = -1;
+		int gcounter = 0;
 
 		while(flag == -1)
 		{	
@@ -59,8 +64,18 @@ public class Game
 
 			case 'q':
 			case 'Q': flag = 0; continue;
+			
+			default: continue;
 			}
-
+			
+			switch(movg[gcounter%movg.length])
+			{
+			case 'w': gxspeed = 0; gyspeed = -1; break;
+			case 'a': gxspeed = -1; gyspeed = 0; break;
+			case 's': gxspeed = 0; gyspeed = 1; break;
+			case 'd': gxspeed = 1; gyspeed = 0; break;
+			}
+			
 			if (map[ypos + yspeed][xpos + xspeed] == 'S')
 				flag = 1;
 
@@ -73,13 +88,22 @@ public class Game
 
 				map[ypos][xpos] = ' ';
 				map[ypos + yspeed][xpos + xspeed] = 'H';
+				
 				xpos += xspeed;
 				ypos += yspeed;
+				
+				map[gypos][gxpos] = ' ';
+				map[gypos + gyspeed][gxpos + gxspeed] = 'G';
+				
+				gxpos += gxspeed;
+				gypos += gyspeed;
+				
+				gcounter++;
+				
 			}
-
-			if ((Math.abs(gy - ypos) == 1 && gx == xpos) || (Math.abs(gx - xpos) == 1 && gy == ypos))
+			
+			if ((Math.abs(gypos - ypos) == 1 && gxpos == xpos) || (Math.abs(gxpos - xpos) == 1 && gypos == ypos))
 				flag = 0;
-
 		}
 
 		System.out.print("\n\n\n\n\n\n\n");
