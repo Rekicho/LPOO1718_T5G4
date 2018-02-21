@@ -194,10 +194,10 @@ public class Game
 	public static void setRandMov(Random rng, int[] speed)
 	{
 		int r1, r2;
-		
+
 		r1 = rng.nextInt(2);
 		r2 = rng.nextInt(2);
-		
+
 		int mov = 1;
 
 		if (r2 == 0)
@@ -215,7 +215,7 @@ public class Game
 			speed[1] = 0;
 		}	
 	}
-	
+
 	public static void moveOgre(char[][] map, int[] pos, int[] speed) 
 	{
 		if (map[pos[1]][pos[0]] == '$')
@@ -230,6 +230,25 @@ public class Game
 
 		pos[0] += speed[0];
 		pos[1] += speed[1];
+	}
+
+	public static void moveOgreClub(char[][] map, int[] pos, int[] speed) 
+	{
+		if(map[pos[1] + speed[1]][pos[0]+ speed[0]] == 'k')
+			map[pos[1] + speed[1]][pos[0]+ speed[0]] = '$';
+
+		else map[pos[1] + speed[1]][pos[0]+ speed[0]] = '*';
+
+		pos[0] += speed[0];
+		pos[1] += speed[1];
+	}
+
+	public static void clearClub(char[][] map, int[] pos)
+	{
+		if (map[pos[1]][pos[0]] == '$')
+			map[pos[1]][pos[0]] = 'k';
+
+		else map[pos[1]][pos[0]] = ' ';
 	}
 
 	public static int level2(Scanner s) 
@@ -250,10 +269,14 @@ public class Game
 		int[] playerSpeed = {0,0};
 
 		int[] ogrePos = {4,1};
-		int[] ogreSpeed = {0,0};
+		int[] ogreSpeed = {0,0}; //Can be initialized with any value
+
+		int[] ogreClubPos = {0,0}; //Can be initialized with any value
+		int[] ogreClubSpeed = {0,0}; //Can be initialized with any value
 
 		char player = 'H';
 		int flag = -1;
+		boolean club = false;
 
 		while(flag == -1)
 		{	
@@ -284,6 +307,7 @@ public class Game
 
 			if (checkValidMove(map,playerPos,playerSpeed))
 			{
+				//Player Movement
 				if(!waste)
 				{
 					if(pickupKey(map, playerPos, playerSpeed))
@@ -292,9 +316,20 @@ public class Game
 					move(map,playerPos,playerSpeed,player);
 				}
 
-				
+				if (flag != 1 && (checkGameOver(playerPos,ogrePos) || checkGameOver(playerPos,ogreClubPos)))
+				{
+					flag = 0;
+					break;
+				}
+
+				if(!club)
+					club = true;
+
+				else clearClub(map, ogreClubPos);
+
 				boolean randomFlag = true;
 
+				//Ogre movement
 				while (randomFlag) 
 				{
 					setRandMov(rng,ogreSpeed);
@@ -311,11 +346,49 @@ public class Game
 
 						moveOgre(map,ogrePos,ogreSpeed);
 					}	
-				} 
-			}
+				}
 
-			if (flag != 1 && checkGameOver(playerPos,ogrePos))
-				flag = 0;
+				if(flag == 0)
+					break;
+
+				if (flag != 1 && (checkGameOver(playerPos,ogrePos) || checkGameOver(playerPos,ogreClubPos)))
+				{
+					flag = 0;
+					break;
+				}
+
+				randomFlag = true;
+
+				//Ogre Club movement
+				while (randomFlag) 
+				{
+					setRandMov(rng,ogreClubSpeed);
+
+					ogreClubPos = Arrays.copyOf(ogrePos, ogrePos.length);
+
+					if (checkValidMove(map,ogreClubPos,ogreClubSpeed)) 
+					{
+						randomFlag = false;
+
+						if(checkOverlap(playerPos,ogreClubPos,ogreClubSpeed))
+						{
+							flag = 0;
+							break;
+						}
+
+						moveOgreClub(map,ogreClubPos,ogreClubSpeed);
+
+						flag += 0;
+					}	
+				}
+
+				if (flag != 1 && (checkGameOver(playerPos,ogrePos) || checkGameOver(playerPos,ogreClubPos)))
+				{
+					flag = 0;
+					break;
+				}
+
+			}
 		}
 
 		printMap(map);
