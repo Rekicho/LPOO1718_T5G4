@@ -403,9 +403,9 @@ public class Game
 	{
 		Scanner s = new Scanner(System.in);
 
-		//if (level1(s) == 1)
-		if (level2(s) == 1)
-			System.out.println("¡Fuerte chico!");
+		if (level1(s) == 1)
+			if (level2(s) == 1)
+				System.out.println("¡Fuerte chico!");
 
 		s.close();
 	}
