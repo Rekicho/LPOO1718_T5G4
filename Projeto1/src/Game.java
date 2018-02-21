@@ -4,6 +4,90 @@ import java.util.Random;
 
 public class Game 
 {
+	public static void printMap(char[][] map)
+	{
+		System.out.print("\n\n\n\n\n\n\n");
+
+		for(int i = 0; i < map.length; i++)
+		{	
+			System.out.println(Arrays.toString(map[i]));
+		}
+
+		System.out.print("\n\n\n\n\n\n\n");
+	}
+
+	public static int updateSpeed(int[] speed, char dir)
+	{
+		switch(dir)
+		{
+		case 'w':
+		case 'W': speed[0] = 0; speed[1] = -1; break;
+
+		case 'a':
+		case 'A': speed[0] = -1; speed[1] = 0; break;
+
+		case 's':
+		case 'S': speed[0] = 0; speed[1] = 1; break;
+
+		case 'd':
+		case 'D': speed[0] = 1; speed[1] = 0; break;
+
+		case 'q':
+		case 'Q': return 0;
+
+		default: return 1;
+		}
+
+		return -1;
+	}
+
+	public static boolean checkWin(char[][] map, int[] pos, int[] speed)
+	{
+		return (map[pos[1] + speed[1]][pos[0] + speed[0]] == 'S');
+	}
+
+	public static boolean checkValidMove(char[][] map, int[] pos, int[] speed)
+	{
+		return (map[pos[1] + speed[1]][pos[0] + speed[0]] != 'X' 
+				&& 
+				map[pos[1] + speed[1]][pos[0] + speed[0]] != 'I');
+	}
+
+	public static boolean checkKey(char[][] map, int[] pos, int[] speed)
+	{
+		return (map[pos[1] + speed[1]][pos[0] + speed[0]] == 'k');
+	}
+
+	public static void openDoors(char[][] map)
+	{
+		for(int i = 0; i < map.length; i++)
+			if(map[i][0] == 'I')
+				map[i][0] = 'S';
+	}
+
+	public static void move(char[][] map, int[] pos, int[] speed, char caracter)
+	{
+		map[pos[1]][pos[0]] = ' ';
+
+		map[pos[1] + speed[1]][pos[0] + speed[0]] = caracter;
+
+		pos[0] += speed[0];
+		pos[1] += speed[1];
+	}
+
+	public static boolean checkOverlap(int[] playerPos, int[] enemyPos, int[] enemySpeed)
+	{
+		return ((enemyPos[0] + enemySpeed[0] == playerPos[0]) 
+				&& 
+				(enemyPos[1] + enemySpeed[1] == playerPos[1]));
+	} 
+
+	public static boolean checkGameOver(int[] playerPos, int[] enemyPos)
+	{
+		return ((Math.abs(enemyPos[1] - playerPos[1]) == 1 && enemyPos[0] == playerPos[0]) 
+				|| 
+				(Math.abs(enemyPos[0] - playerPos[0]) == 1 && enemyPos[1] == playerPos[1]));
+	} 
 
 	public static int level1(Scanner s) 
 	{
@@ -19,17 +103,15 @@ public class Game
 				{'X',' ','I',' ','I',' ','X','k',' ','X'},
 				{'X','X','X','X','X','X','X','X','X','X'} };
 
-		char[] movg = {'a','s','s','s','s','a','a','a','a','a','a','s','d','d','d','d','d','d','d','w','w','w','w','w'};
+		//Guard Moves
+		char[] movg = {'a','s','s','s','s','a','a','a','a','a','a','s',
+				'd','d','d','d','d','d','d','w','w','w','w','w'};
 
-		int xpos = 1;
-		int ypos = 1;
-		int xspeed = 0;
-		int yspeed = 0;
+		int[] playerPos = {1,1}; //x,y
+		int[] playerSpeed = {0,0}; //xspeed, yspeed
 
-		int gxpos = 8;
-		int gypos = 1;
-		int gxspeed = 0;
-		int gyspeed = 0;
+		int[] guardPos = {8,1};
+		int[] guardSpeed = {0,0};
 
 		int flag = -1;
 		int gcounter = 0;
@@ -37,101 +119,56 @@ public class Game
 
 		while(flag == -1)
 		{	
-			System.out.print("\n\n\n\n\n\n\n");
-
-			for(int i = 0; i < map.length; i++)
-			{	
-				System.out.println(Arrays.toString(map[i]));
-			}
-
-			System.out.print("\n\n\n\n\n\n\n");
-
+			printMap(map);
 			System.out.print("Enter a character to move: ");
 
-			char dir = s.next().charAt(0);
+			flag = updateSpeed(playerSpeed,s.next().charAt(0)); //Returns 0 if the player wants to quit, 1 if not valid key, -1 otherwise
 
-			switch(dir)
+			if (flag == 0)
+				continue;
+
+			if (flag == 1)
 			{
-			case 'w':
-			case 'W': xspeed = 0; yspeed = -1; break;
-
-			case 'a':
-			case 'A': xspeed = -1; yspeed = 0; break;
-
-			case 's':
-			case 'S': xspeed = 0; yspeed = 1; break;
-
-			case 'd':
-			case 'D': xspeed = 1; yspeed = 0; break;
-
-			case 'q':
-			case 'Q': flag = 0; continue;
-
-			default: continue;
+				flag = -1;
+				continue;
 			}
 
-			switch(movg[gcounter%movg.length])
-			{
-			case 'w': gxspeed = 0; gyspeed = -1; break;
-			case 'a': gxspeed = -1; gyspeed = 0; break;
-			case 's': gxspeed = 0; gyspeed = 1; break;
-			case 'd': gxspeed = 1; gyspeed = 0; break;
-			}
+			updateSpeed(guardSpeed,movg[gcounter%movg.length]);
 
-			if (map[ypos + yspeed][xpos + xspeed] == 'S')
+			if(checkWin(map,playerPos,playerSpeed))
 				flag = 1;
 
-			if (map[ypos + yspeed][xpos + xspeed] != 'X' && map[ypos + yspeed][xpos + xspeed] != 'I')
+			if (checkValidMove(map,playerPos,playerSpeed))
 			{
 				if(lever)
 					lever = false;
 
-				if(map[ypos + yspeed][xpos + xspeed] == 'k')
+				if(checkKey(map,playerPos,playerSpeed))
 				{
 					lever = true;
 
-					for(int i = 0; i < map.length; i++)
-						if(map[i][0] == 'I')
-							map[i][0] = 'S';
+					openDoors(map);
 				}
 
 				if(!lever)
-				{
-					map[ypos][xpos] = ' ';
+					move(map,playerPos,playerSpeed,'H');
 
-					map[ypos + yspeed][xpos + xspeed] = 'H';
-
-					xpos += xspeed;
-					ypos += yspeed;
-				}
-
-				if((gxpos + gxspeed == xpos) && (gypos + gyspeed == ypos))
+				if(checkOverlap(playerPos,guardPos,guardSpeed))
 				{
 					flag = 0;
 					break;
 				}
-				
-				map[gypos][gxpos] = ' ';
-				map[gypos + gyspeed][gxpos + gxspeed] = 'G';
 
-				gxpos += gxspeed;
-				gypos += gyspeed;
+				move(map,guardPos,guardSpeed,'G');
 
 				gcounter++;
-
 			}
 
-			if (flag != 1 && ((Math.abs(gypos - ypos) == 1 && gxpos == xpos) || (Math.abs(gxpos - xpos) == 1 && gypos == ypos)))
+			if (flag != 1 && checkGameOver(playerPos,guardPos))
 				flag = 0;
 		}
 
-		System.out.print("\n\n\n\n\n\n\n");
-
-		for(int i = 0; i < map.length; i++) {	
-			System.out.println(Arrays.toString(map[i]));
-		}
-
-		System.out.print("\n\n\n\n\n\n\n");
+		printMap(map);
 
 		if(flag == 0)
 			System.out.println("GameOver!");
@@ -139,12 +176,67 @@ public class Game
 		return flag;
 	}
 
-	public static int level2(Scanner s) {
+	public static boolean movingToDoor(char[][] map, int[] pos, int[] speed)
+	{
+		return (map[pos[1] + speed[1]][pos[0] + speed[0]] == 'I');
+	} 
 
+	public static void openDoor(char[][] map, int[] pos, int[] speed)
+	{
+		map[pos[1] + speed[1]][pos[0] + speed[0]] = 'S';
+	} 
+
+	public static boolean pickupKey(char[][] map, int[] pos, int[] speed)
+	{
+		return (map[pos[1] + speed[1]][pos[0] + speed[0]] == 'k');
+	} 
+
+	public static void setRandMov(Random rng, int[] speed)
+	{
+		int r1, r2;
+		
+		r1 = rng.nextInt(2);
+		r2 = rng.nextInt(2);
+		
+		int mov = 1;
+
+		if (r2 == 0)
+			mov = -1;
+
+		if (r1 == 0) 
+		{
+			speed[0] = 0;
+			speed[1] = mov;
+		}
+
+		else
+		{
+			speed[0] = mov;
+			speed[1] = 0;
+		}	
+	}
+	
+	public static void moveOgre(char[][] map, int[] pos, int[] speed) 
+	{
+		if (map[pos[1]][pos[0]] == '$')
+			map[pos[1]][pos[0]] = 'k';
+
+		else map[pos[1]][pos[0]] = ' ';
+
+		if(map[pos[1] + speed[1]][pos[0]+ speed[0]] == 'k')
+			map[pos[1] + speed[1]][pos[0]+ speed[0]] = '$';
+
+		else map[pos[1] + speed[1]][pos[0]+ speed[0]] = '0';
+
+		pos[0] += speed[0];
+		pos[1] += speed[1];
+	}
+
+	public static int level2(Scanner s) 
+	{
 		Random rng = new Random();
 
-		char[][] map = { 
-				{'X','X','X','X','X','X','X','X','X'},
+		char[][] map = { {'X','X','X','X','X','X','X','X','X'},
 				{'I',' ',' ',' ','0',' ',' ','k','X'},
 				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
 				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
@@ -152,177 +244,95 @@ public class Game
 				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
 				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
 				{'X','H',' ',' ',' ',' ',' ',' ','X'},
-				{'X','X','X','X','X','X','X','X','X'} 
-		};
+				{'X','X','X','X','X','X','X','X','X'} };
 
-		int flag = -1;
+		int[] playerPos = {1,7};
+		int[] playerSpeed = {0,0};
 
-		int xpos = 1;
-		int ypos = 7;
-		int xspeed = 0;
-		int yspeed = 0;
-
-		int oxpos = 4;
-		int oypos = 1;
+		int[] ogrePos = {4,1};
+		int[] ogreSpeed = {0,0};
 
 		char player = 'H';
+		int flag = -1;
 
 		while(flag == -1)
 		{	
-			System.out.print("\n\n\n\n\n\n\n");
-
-			for(int i = 0; i < map.length; i++)
-			{	
-				System.out.println(Arrays.toString(map[i]));
-			}
-
-			System.out.print("\n\n\n\n\n\n\n");
-
+			printMap(map);
 			System.out.print("Enter a character to move: ");
 
-			char dir = s.next().charAt(0);
+			flag = updateSpeed(playerSpeed,s.next().charAt(0)); //Returns 0 if the player wants to quit, 1 if not valid key, -1 otherwise
 
-			switch(dir)
+			if (flag == 0)
+				continue;
+
+			if (flag == 1)
 			{
-			case 'w':
-			case 'W': xspeed = 0; yspeed = -1; break;
-
-			case 'a':
-			case 'A': xspeed = -1; yspeed = 0; break;
-
-			case 's':
-			case 'S': xspeed = 0; yspeed = 1; break;
-
-			case 'd':
-			case 'D': xspeed = 1; yspeed = 0; break;
-
-			case 'q':
-			case 'Q': flag = 0; continue;
-
-			default: continue;
+				flag = -1;
+				continue;
 			}
 
-			if (map[ypos + yspeed][xpos + xspeed] == 'S')
+			if(checkWin(map,playerPos,playerSpeed))
 				flag = 1;
 
 			boolean waste = false;
 
-			if (map[ypos + yspeed][xpos + xspeed] == 'I' && player == 'K') 
+			if (movingToDoor(map,playerPos,playerSpeed) && player == 'K' /*hasKey(player)*/) 
 			{
 				waste = true;
-				map[ypos + yspeed][xpos + xspeed] = 'S';
+				openDoor(map,playerPos,playerSpeed);
 			}
 
-			if (map[ypos + yspeed][xpos + xspeed] != 'X' && map[ypos + yspeed][xpos + xspeed] != 'I')
+			if (checkValidMove(map,playerPos,playerSpeed))
 			{
 				if(!waste)
 				{
-					if(map[ypos + yspeed][xpos + xspeed] == 'k')
+					if(pickupKey(map, playerPos, playerSpeed))
 						player = 'K';
 
-					map[ypos][xpos] = ' ';
-					map[ypos + yspeed][xpos + xspeed] = player;
-
-					xpos += xspeed;
-					ypos += yspeed;
+					move(map,playerPos,playerSpeed,player);
 				}
 
-				int r1;
-				int r2;
-
+				
 				boolean randomFlag = true;
 
-				while (randomFlag) {
+				while (randomFlag) 
+				{
+					setRandMov(rng,ogreSpeed);
 
-					r1 = rng.nextInt(2);
-					r2 = rng.nextInt(2);
+					if (checkValidMove(map,ogrePos,ogreSpeed)) 
+					{
+						randomFlag = false;
 
-					int mov = 1;
-
-					if (r2 == 0)
-						mov = -1;
-
-					if (r1 == 0) {
-						if (map[oypos + mov][oxpos] != 'I' && map[oypos + mov][oxpos] != 'X') {
-
-							randomFlag = false;
-							
-							if((oxpos == xpos) && (oypos + mov == ypos))
-							{
-								flag = 0;
-								break;
-							}
-
-							
-							if (map[oypos][oxpos] == '$')
-								map[oypos][oxpos] = 'k';
-							
-							else map[oypos][oxpos] = ' ';
-							
-							if(map[oypos + mov][oxpos] == 'k')
-								map[oypos + mov][oxpos] = '$';
-							
-							else map[oypos + mov][oxpos] = '0';
-							
-							oypos += mov;
-
-						}	
-					} else {
-						if (map[oypos][oxpos + mov] != 'I' && map[oypos][oxpos + mov] != 'X') {
-
-							randomFlag = false;
-							
-							if((oxpos + mov == xpos) && (oypos == ypos))
-							{
-								flag = 0;
-								break;
-							}
-
-							if (map[oypos][oxpos] == '$')
-								map[oypos][oxpos] = 'k';
-							
-							else map[oypos][oxpos] = ' ';
-							
-							if(map[oypos][oxpos + mov] == 'k')
-								map[oypos][oxpos + mov] = '$';
-							
-							else map[oypos][oxpos + mov] = '0';
-							
-							oxpos += mov;
-
+						if(checkOverlap(playerPos,ogrePos,ogreSpeed))
+						{
+							flag = 0;
+							break;
 						}
-					}
-				}
 
-				if (flag != 1 && ((Math.abs(oypos - ypos) == 1 && oxpos == xpos) || (Math.abs(oxpos - xpos) == 1 && oypos == ypos)))
-					flag = 0;
-
+						moveOgre(map,ogrePos,ogreSpeed);
+					}	
+				} 
 			}
 
+			if (flag != 1 && checkGameOver(playerPos,ogrePos))
+				flag = 0;
 		}
 
-		System.out.print("\n\n\n\n\n\n\n");
-
-		for(int i = 0; i < map.length; i++) {	
-			System.out.println(Arrays.toString(map[i]));
-		}
-
-		System.out.print("\n\n\n\n\n\n\n");
+		printMap(map);
 
 		if(flag == 0)
 			System.out.println("GameOver!");
 
 		return flag;
-
 	}
 
 	public static void main(String[] args) 
 	{
 		Scanner s = new Scanner(System.in);
 
-		if (level1(s) == 1)
-			if (level2(s) == 1)
-				System.out.println("¡Fuerte chico!");
+		//if (level1(s) == 1)
+		if (level2(s) == 1)
+			System.out.println("¡Fuerte chico!");
 
 		s.close();
 	}
