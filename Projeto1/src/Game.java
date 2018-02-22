@@ -133,10 +133,10 @@ public class Game
 				continue;
 			}
 
-			updateSpeed(guardSpeed,movg[gcounter%movg.length]);
-
 			if(checkWin(map,playerPos,playerSpeed))
 				flag = 1;
+			
+			updateSpeed(guardSpeed,movg[gcounter%movg.length]);
 
 			if (checkValidMove(map,playerPos,playerSpeed))
 			{
