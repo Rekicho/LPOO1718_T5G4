@@ -351,7 +351,7 @@ public class Game
 				if(flag == 0)
 					break;
 
-				if (flag != 1 && (checkGameOver(playerPos,ogrePos) || checkGameOver(playerPos,ogreClubPos)))
+				if (flag != 1 && checkGameOver(playerPos,ogrePos))
 				{
 					flag = 0;
 					break;
@@ -382,7 +382,7 @@ public class Game
 					}	
 				}
 
-				if (flag != 1 && (checkGameOver(playerPos,ogrePos) || checkGameOver(playerPos,ogreClubPos)))
+				if (flag != 1 && checkGameOver(playerPos,ogreClubPos))
 				{
 					flag = 0;
 					break;
