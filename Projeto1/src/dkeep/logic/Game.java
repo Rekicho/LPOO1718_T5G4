@@ -2,6 +2,7 @@ package dkeep.logic;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Game 
 {
@@ -13,6 +14,13 @@ public class Game
 	private Hero player;
 	private Enemy enemy;
 	private Weapon ogreClub;
+	
+	private static char getInput(Scanner s)
+	{
+		System.out.print("Hello there! \n1 - Rookie \n2 - Drunken \n3 - Suspicious \nSelect dificulty: ");
+
+		return s.next().charAt(0);
+	}
 
 	public Game()
 	{
@@ -75,9 +83,30 @@ public class Game
 		int[] playerPos = player.getPosition();
 		int[] enemyPos = en.getPosition();
 
+		if (!en.getAsleep()) {
+		
 		return ((Math.abs(enemyPos[1] - playerPos[1]) == 1 && enemyPos[0] == playerPos[0]) 
 													|| 
 				(Math.abs(enemyPos[0] - playerPos[0]) == 1 && enemyPos[1] == playerPos[1]));
+		} else {
+			return false;
+		}
+	}
+	
+	public void selectDifficulty() {
+		Scanner s = new Scanner(System.in);
+		char i = getInput(s);
+		
+		if (i == '1') 
+			enemy = new GuardRookie(8,1);
+		else if (i == '2') 
+			enemy = new GuardDrunken(8,1);
+		else if (i == '3')
+			enemy = new GuardSuspicious(8,1);
+		else {
+			System.out.print("\n\n\nInvalid option! 1, 2 or 3, genius!\n\n\n");
+			selectDifficulty();
+		}
 	}
 	
 	public void setupLevel1()
@@ -85,7 +114,7 @@ public class Game
 		lever = false;
 		map = new Map(level);
 		player = new Hero(1,1);
-		enemy = new Guard(8,1);
+		selectDifficulty();
 	}
 
 	public int level1(char ch) 

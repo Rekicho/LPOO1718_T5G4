@@ -8,5 +8,7 @@ public class Enemy extends Person
 	}
 	
 	public char getMove() {return ' ';}
+	public boolean getAsleep() {return false;}
+	public boolean isAsleep() {return false;}
 	public void advanceGuard() {}
 }

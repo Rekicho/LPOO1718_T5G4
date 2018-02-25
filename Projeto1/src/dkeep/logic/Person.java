@@ -36,6 +36,8 @@ public class Person
 
 		case 'd':
 		case 'D': speed[0] = 1; speed[1] = 0; break;
+		
+		case ' ': speed[0] = 0; speed[1] = 0; break;
 
 		case 'q':
 		case 'Q': return 1;

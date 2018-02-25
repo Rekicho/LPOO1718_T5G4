@@ -39,7 +39,7 @@ public class DungeonKeep
 			System.out.println("GameOver!");
 		
 		if(gameover == 2)
-			System.out.println("¡Fuerte chico!");
+			System.out.println("Fuerte chico!");
 
 		s.close();
 	}
