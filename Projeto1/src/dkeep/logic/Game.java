@@ -13,7 +13,8 @@ public class Game
 	private Map map;
 	private Hero player;
 	private Enemy enemy;
-	private Weapon ogreClub;
+	private Enemy[] ogre;
+	private Weapon[] ogreClub;
 	
 	private static char getInput(Scanner s)
 	{
@@ -186,7 +187,7 @@ public class Game
 		return (map.position(pos[0] + speed[0], pos[1] + speed[1]) == 'k');
 	}
 	
-	public void clearClub()
+	public void clearClub(Weapon ogreClub)
 	{
 		int[] pos = ogreClub.getPosition();
 		
@@ -214,10 +215,10 @@ public class Game
 		else en.setSpeed(mov,0);	
 	}
 
-	public void moveOgre() 
+	public void moveOgre(Enemy og) 
 	{
-		int[] pos = enemy.getPosition();
-		int[] speed = enemy.getSpeed();
+		int[] pos = og.getPosition();
+		int[] speed = og.getSpeed();
 				
 		if (map.position(pos[0], pos[1]) == '$')
 			map.setPosition(pos[0], pos[1], 'k');
@@ -229,10 +230,10 @@ public class Game
 
 		else map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], '0');
 
-		enemy.updatePos();
+		og.updatePos();
 	}
 	
-	public void moveOgreClub() 
+	public void moveOgreClub(Weapon ogreClub) 
 	{
 		int[] pos = ogreClub.getPosition();
 		int[] speed = ogreClub.getSpeed();
@@ -250,109 +251,117 @@ public class Game
 		club = false;
 		map = new Map(level);
 		player = new Hero(1,7);
-		enemy = new Ogre(4,1);
-		ogreClub = new Weapon(0,0);
+		ogre = new Enemy[2];
+		ogre[0] = new Ogre(4,1);
+		ogre[1] = new Ogre(7,2);
+		ogreClub = new Weapon[2];
+		ogreClub[0] = new Weapon(0,0);
+		ogreClub[1] = new Weapon(0,0);
 	}
 	
 	public int level2(char ch, Random rng) 
 	{
-		flag = player.updateSpeed(ch);
-
-		if(flag != -1)
-			return flag;
-
-		flag = 0;
-
-		if(checkWin())
-			flag = 2;
-
-		boolean waste = false;
-		
-		if (movingToDoor() && player.getCaracter() == 'K') 
-		{
-			waste = true;
-			openDoor();
-		}
-		
-		if (checkValidMove(player))
-		{
-			//Player Movement
-			if(!waste)
-			{
-				if(pickupKey())
-					player.setCaracter('K');
-
-				move(player);
-			}
-
-			if (flag != 2 && (checkGameOver(enemy) || checkGameOver(ogreClub)))
-			{
-				flag = 1;
+		for (int i = 0; i < ogre.length; i++) {
+			flag = player.updateSpeed(ch);
+	
+			if(flag != -1)
 				return flag;
-			}
-
-			if(!club)
-				club = true;
-
-			else clearClub();
-
-			boolean randomFlag = true;
-
-			//Ogre movement
-			while (randomFlag) 
-			{
-				setRandMov(rng,enemy);
-
-				if (checkValidMove(enemy))
-				{
-					randomFlag = false;
-
-					if(checkOverlap(enemy))
-					{
-						flag = 1;
-						return flag;
-					}
-
-					moveOgre();
-				}	
-			}
-
-			if (flag != 1 && checkGameOver(enemy))
-			{
+	
+			flag = 0;
+	
+			if(checkWin())
 				flag = 2;
-				return flag;
-			}
-
-			randomFlag = true;
-
-			//Ogre Club movement
-			while (randomFlag) 
+	
+			boolean waste = false;
+			
+			if (movingToDoor() && player.getCaracter() == 'K') 
 			{
-				setRandMov(rng,ogreClub);
-
-				ogreClub.setPosition(enemy.getPosition()); //VER SE NAO DA MERDA
-
-				if (checkValidMove(ogreClub)) 
+				waste = true;
+				openDoor();
+			}
+			
+			if (checkValidMove(player))
+			{
+				
+				//Player Movement
+				if(!waste)
 				{
-					randomFlag = false;
-
-					if(checkOverlap(ogreClub))
+					if(pickupKey())
+						player.setCaracter('K');
+	
+					move(player);
+				}
+	
+				if (flag != 2 && (checkGameOver(ogre[i]) || checkGameOver(ogreClub[i])))
+				{
+					flag = 1;
+					return flag;
+				}
+	
+				if(!club)
+					club = true;
+	
+				else clearClub(ogreClub[i]);
+	
+				boolean randomFlag = true;
+	
+				//Ogre movement
+				
+				while (randomFlag) 
+				{
+					setRandMov(rng,ogre[i]);
+	
+					if (checkValidMove(ogre[i]))
 					{
-						flag = 1;
-						return flag;
-					}
-
-					moveOgreClub();
-				}	
+						randomFlag = false;
+	
+						if(checkOverlap(ogre[i]))
+						{
+							flag = 1;
+							return flag;
+						}
+	
+						moveOgre(ogre[i]);
+					}	
+				}
+	
+				if (flag != 1 && checkGameOver(ogre[i]))
+				{
+					flag = 2;
+					return flag;
+				}
+	
+				randomFlag = true;
+	
+				//Ogre Club movement
+				while (randomFlag) 
+				{
+					setRandMov(rng,ogreClub[i]);
+	
+					ogreClub[i].setPosition(ogre[i].getPosition());
+	
+					if (checkValidMove(ogreClub[i])) 
+					{
+						randomFlag = false;
+	
+						if(checkOverlap(ogreClub[i]))
+						{
+							flag = 1;
+							return flag;
+						}
+	
+						moveOgreClub(ogreClub[i]);
+					}	
+				}
+	
+				if (flag != 2 && checkGameOver(ogreClub[i]))
+				{
+					flag = 1;
+					return flag;
+				}
+	
 			}
-
-			if (flag != 2 && checkGameOver(ogreClub))
-			{
-				flag = 1;
-				return flag;
-			}
-
-		}
+	}
 		
 		return flag;
 	}
