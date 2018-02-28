@@ -55,7 +55,7 @@ public class GuardSuspicious extends Enemy
 	{
 		Random rng = new Random();
 		
-		if (randomInt(rng, 2) == 0)
+		if (randomInt(rng, 3) == 0) // 33% probabilidade voltar para tras
 			reverseMov();
 		else
 			gcounter += way;

@@ -1,6 +1,5 @@
 package dkeep.cli;
 
-import java.util.Random;
 import java.util.Scanner;
 import dkeep.logic.Game;
 
@@ -21,7 +20,6 @@ public class DungeonKeep
 	public static void main(String[] args) 
 	{
 		Scanner s = new Scanner(System.in);
-		Random rng = new Random();
 		
 		int gameover = 0; //0 inside game, 1 gameover, 2 win
 		Game game = new Game();
@@ -30,7 +28,7 @@ public class DungeonKeep
 		{
 			printGame(game);
 			char ch = getInput(s);
-			gameover = game.gameLogic(ch,rng);		
+			gameover = game.gameLogic(ch);		
 		}
 
 		printGame(game);

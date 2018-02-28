@@ -40,7 +40,7 @@ public class GuardDrunken extends Enemy {
 		
 		Random rng = new Random();
 		
-		if (randomInt(rng, 10) > 6) {
+		if (randomInt(rng, 3) == 0) {
 			asleep = true;
 			setCaracter('g');
 		} else {
