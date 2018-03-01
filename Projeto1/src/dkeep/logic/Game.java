@@ -377,7 +377,12 @@ public class Game
 				//Check ogre and club overpos
 				if(club && !Arrays.equals(ogre.getPosition(), ogreClub.getPosition()))
 					clearClub(ogreClub);
+			}
 
+			for (int i = 0; i < enemies.size(); i++) 
+			{
+				Enemy ogre = enemies.get(i);
+				
 				boolean randomFlag = true;
 
 				//Ogre movement
