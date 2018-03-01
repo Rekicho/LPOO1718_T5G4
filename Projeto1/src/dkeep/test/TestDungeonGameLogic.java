@@ -25,11 +25,11 @@ public class TestDungeonGameLogic {
 	{
 		Game game = new Game(1,map,heroPos,enemyPos);
 		Hero hero = game.getHero();
-		assert(Arrays.equals(heroPos, hero.getPosition()));
+		assertTrue(Arrays.equals(heroPos, hero.getPosition()));
 		hero.updateSpeed('s');
 		game.move(hero);
 		heroPos[1] = 2;
-		assert(Arrays.equals(heroPos, hero.getPosition()));
+		assertTrue(Arrays.equals(heroPos, hero.getPosition()));
 	}
 	
 	@Test
@@ -37,11 +37,11 @@ public class TestDungeonGameLogic {
 	{
 		Game game = new Game(1,map,heroPos,enemyPos);
 		Hero hero = game.getHero();
-		assert(Arrays.equals(heroPos, hero.getPosition()));
+		assertTrue(Arrays.equals(heroPos, hero.getPosition()));
 		hero.updateSpeed('a');
 		if (game.checkValidMove(hero))
 			game.move(hero);
-		assert(Arrays.equals(heroPos, hero.getPosition()));
+		assertTrue(Arrays.equals(heroPos, hero.getPosition()));
 	}
 	
 	@Test
@@ -66,7 +66,7 @@ public class TestDungeonGameLogic {
 			game.move(hero);
 		
 		heroPos[1] = 2;
-		assert(Arrays.equals(heroPos, hero.getPosition()));
+		assertTrue(Arrays.equals(heroPos, hero.getPosition()));
 	}
 	
 	@Test
