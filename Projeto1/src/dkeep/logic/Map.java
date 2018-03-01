@@ -39,6 +39,11 @@ public class Map
 		}
 	}
 	
+	public Map(char[][] map)
+	{
+		this.map = map;
+	}
+	
 	public String toString()
 	{
 		String temp = "\n\n\n\n\n\n\n";

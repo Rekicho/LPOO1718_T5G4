@@ -15,6 +15,16 @@ public class Game
 	private Hero player;
 	private ArrayList<Enemy> enemies;
 	private ArrayList<Weapon> ogreClubs;
+	
+	public Hero getHero()
+	{
+		return player;
+	}
+	
+	public char getPos(int x, int y)
+	{
+		return map.position(x, y);
+	}
 
 	private static char getInput(Scanner s)
 	{
@@ -25,10 +35,22 @@ public class Game
 
 	public Game()
 	{
-		level = 2;
-		setupLevel2();
-		//level = 1;
-		//setupLevel1();		
+		level = 1;
+		setupLevel1();		
+	}
+	
+	public Game(int level, char[][] map, int[] heroPos, int[] enemyPos)
+	{
+		this.level = level;
+		if(level == 1)
+		{
+		lever = false;
+		this.map = new Map(map);
+		player = new Hero(heroPos[0],heroPos[1]);
+		enemies = new ArrayList<Enemy>(1);
+		Enemy enemy = new GuardRookie(enemyPos[0],enemyPos[1]);
+		enemies.add(enemy);
+		}
 	}
 
 	public boolean checkWin()
