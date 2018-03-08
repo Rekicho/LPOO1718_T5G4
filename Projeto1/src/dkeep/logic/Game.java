@@ -26,6 +26,10 @@ public class Game
 		return map.position(x, y);
 	}
 	
+	public ArrayList<Enemy> getEnemies() {
+		return enemies;
+	}
+	
 	public char getEnemyChar(int i)
 	{
 		return enemies.get(i).getCaracter();
@@ -144,6 +148,24 @@ public class Game
 		Scanner s = new Scanner(System.in);
 		char i = getInput(s);
 
+		Enemy enemy;
+
+		if (i == '1') 
+			enemy = new GuardRookie(8,1);
+		else if (i == '2') 
+			enemy = new GuardDrunken(8,1);
+		else if (i == '3')
+			enemy = new GuardSuspicious(8,1);
+		else {
+			System.out.print("\n\n\nInvalid option! 1, 2 or 3, genius!\n\n\n");
+			selectDifficulty();
+			return;
+		}
+
+		enemies.add(enemy);
+	}
+	
+	public void selectDifficulty(char i) {
 		Enemy enemy;
 
 		if (i == '1') 
