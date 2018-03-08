@@ -14,6 +14,7 @@ public class Game
 	private Hero player;
 	private ArrayList<Enemy> enemies;
 	private ArrayList<Weapon> ogreClubs;
+	private int ogreNumber;
 
 	public Hero getHero()
 	{
@@ -41,10 +42,21 @@ public class Game
 
 	public Game()
 	{
+		Random rng = new Random();
+		
+		ogreNumber = rng.nextInt(3) + 1;
 		level = 1;
 		setupLevel1();		
 	}
 
+	public Game(int on, char dif)
+	{
+		ogreNumber = on;
+		level = 1;
+		setupLevel1();
+		selectDifficulty(dif);
+	}
+	
 	public Game(int level, char[][] map, int[] heroPos, int[] enemyPos)
 	{
 		this.level = level;
@@ -60,6 +72,7 @@ public class Game
 
 		if(level == 2)
 		{
+			ogreNumber = 1;
 			club = false;
 			this.map = new Map(map);
 			player = new Hero(heroPos[0],heroPos[1]);
@@ -285,7 +298,7 @@ public class Game
 				map.setPosition(pos[0], pos[1], 'k');
 		}
 
-		if(!unique)
+		else if(!unique)
 		{
 			if(!anyActive && anyStun)
 				map.setPosition(pos[0], pos[1], '8');
@@ -363,8 +376,6 @@ public class Game
 
 	public void setupLevel2()
 	{
-		Random rng = new Random();
-
 		club = false;
 		map = new Map(level);
 		player = new Hero(1,7);
@@ -372,18 +383,16 @@ public class Game
 		player.setCaracter('A');
 		map.setPosition(1, 7, 'A');
 
-		int randomNum = rng.nextInt(3) + 1;
+		enemies = new ArrayList<Enemy>(ogreNumber);
+		ogreClubs = new ArrayList<Weapon>(ogreNumber);
 
-		enemies = new ArrayList<Enemy>(randomNum);
-		ogreClubs = new ArrayList<Weapon>(randomNum);
-
-		for(int i = 0; i < randomNum; i++)
+		for(int i = 0; i < ogreNumber; i++)
 		{
 			Enemy enemy = new Ogre(4,1);
 			enemies.add(enemy);
 		}
 
-		for(int i = 0; i < randomNum; i++)
+		for(int i = 0; i < ogreNumber; i++)
 		{
 			Weapon weapon = new Weapon(0,0);
 			ogreClubs.add(weapon);
@@ -440,7 +449,7 @@ public class Game
 					clearClub(ogreClub);
 			}
 
-			for (int i = 0; i < enemies.size(); i++) 
+			for (int i = 0; ogreNeedsMove && i < enemies.size(); i++) 
 			{
 				Enemy ogre = enemies.get(i);
 

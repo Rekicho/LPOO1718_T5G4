@@ -46,15 +46,15 @@ public class Map
 	
 	public String toString()
 	{
-		String temp = "\n\n\n\n\n\n\n";
+		String temp = "";
 		
 		for(int i = 0; i < map.length; i++)
-		{	
-			temp += Arrays.toString(map[i]);
-			temp += "\n";
+		{
+			for(int j = 0; j < map[i].length; j++) {
+			temp += " " + map[i][j] + " ";
+			}
+		temp += "\n";
 		}
-		
-		temp += "\n\n\n\n\n\n\n";
 		
 		return temp;
 	}
