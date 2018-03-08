@@ -1,7 +1,6 @@
 package dkeep.logic;
 
 import java.util.Random;
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -38,13 +37,6 @@ public class Game
 	public char getPlayerChar()
 	{
 		return player.getCaracter();
-	}
-
-	private static char getInput(Scanner s)
-	{
-		System.out.print("Hello there! \n1 - Rookie \n2 - Drunken \n3 - Suspicious \nSelect dificulty: ");
-
-		return s.next().charAt(0);
 	}
 
 	public Game()
@@ -143,27 +135,6 @@ public class Game
 			return false;
 		}
 	}
-
-	public void selectDifficulty() {
-		Scanner s = new Scanner(System.in);
-		char i = getInput(s);
-
-		Enemy enemy;
-
-		if (i == '1') 
-			enemy = new GuardRookie(8,1);
-		else if (i == '2') 
-			enemy = new GuardDrunken(8,1);
-		else if (i == '3')
-			enemy = new GuardSuspicious(8,1);
-		else {
-			System.out.print("\n\n\nInvalid option! 1, 2 or 3, genius!\n\n\n");
-			selectDifficulty();
-			return;
-		}
-
-		enemies.add(enemy);
-	}
 	
 	public void selectDifficulty(char i) {
 		Enemy enemy;
@@ -174,11 +145,8 @@ public class Game
 			enemy = new GuardDrunken(8,1);
 		else if (i == '3')
 			enemy = new GuardSuspicious(8,1);
-		else {
-			System.out.print("\n\n\nInvalid option! 1, 2 or 3, genius!\n\n\n");
-			selectDifficulty();
-			return;
-		}
+		
+		else return;
 
 		enemies.add(enemy);
 	}
@@ -189,7 +157,6 @@ public class Game
 		map = new Map(level);
 		player = new Hero(1,1);
 		enemies = new ArrayList<Enemy>(1);
-		selectDifficulty();
 	}
 
 	public int level1(char ch) 

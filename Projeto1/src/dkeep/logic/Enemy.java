@@ -1,6 +1,6 @@
 package dkeep.logic;
 
-public class Enemy extends Person
+public abstract class Enemy extends Person
 {
 	public Enemy(int xpos, int ypos, char ch)
 	{

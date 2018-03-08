@@ -16,6 +16,18 @@ public class DungeonKeep
 	{
 		System.out.println(game.toString());
 	}
+	
+	public static char getDifficulty(Scanner s)
+	{
+		System.out.print("Hello there! \n1 - Rookie \n2 - Drunken \n3 - Suspicious \nSelect dificulty: ");
+
+		return s.next().charAt(0);
+	}
+	
+	public static void tryAgain()
+	{
+		System.out.print("\n\n\nInvalid option! 1, 2 or 3, genius!\n\n\n");
+	}
 
 	public static void main(String[] args) 
 	{
@@ -23,6 +35,16 @@ public class DungeonKeep
 		
 		int gameover = 0; //0 inside game, 1 gameover, 2 win
 		Game game = new Game();
+		
+		char diff = getDifficulty(s);
+		
+		while(!(diff == '1' || diff == '2' || diff == '3'))
+		{
+			tryAgain();			
+			diff = getDifficulty(s);
+		}
+		
+		game.selectDifficulty(diff);
 
 		while (gameover == 0)
 		{

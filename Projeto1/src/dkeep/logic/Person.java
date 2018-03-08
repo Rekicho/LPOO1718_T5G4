@@ -2,7 +2,7 @@ package dkeep.logic;
 
 import java.util.Arrays;
 
-public class Person 
+public abstract class Person 
 {
 	private int[] pos;
 	private int[] speed;
