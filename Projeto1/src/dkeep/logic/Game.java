@@ -433,7 +433,7 @@ public class Game
 				move(player);
 			}
 
-			for (int i = 0; ogreNeedsMove && i < enemies.size(); i++) 
+			for (int i = 0; i < enemies.size(); i++) 
 			{
 				Enemy ogre = enemies.get(i);
 				Weapon ogreClub = ogreClubs.get(i);

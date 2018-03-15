@@ -92,7 +92,7 @@ public class Window {
 				System.exit(0);
 			}
 		});
-		btnExit.setBounds(416, 248, 117, 29);
+		btnExit.setBounds(374, 300, 117, 29);
 		frame.getContentPane().add(btnExit);
 		
 		JTextArea txtrSpace = new JTextArea();
@@ -121,7 +121,7 @@ public class Window {
 				txtrSpace.setText(game.toString());
 			}
 		});
-		btnLeft.setBounds(372, 164, 84, 29);
+		btnLeft.setBounds(306, 164, 84, 29);
 		frame.getContentPane().add(btnLeft);
 		
 		btnUp.addActionListener(new ActionListener() {
@@ -144,7 +144,7 @@ public class Window {
 				txtrSpace.setText(game.toString());
 			}
 		});
-		btnUp.setBounds(425, 139, 84, 29);
+		btnUp.setBounds(389, 136, 84, 29);
 		frame.getContentPane().add(btnUp);
 		
 		btnRight.addActionListener(new ActionListener() {
@@ -190,7 +190,7 @@ public class Window {
 				txtrSpace.setText(game.toString());
 			}
 		});
-		btnDown.setBounds(425, 192, 84, 29);
+		btnDown.setBounds(389, 192, 84, 29);
 		frame.getContentPane().add(btnDown);
 		
 		lblState.setBounds(6, 306, 333, 16);
@@ -229,7 +229,7 @@ public class Window {
 			}
 		});
 		
-		btnNewGame.setBounds(416, 84, 117, 29);
+		btnNewGame.setBounds(374, 17, 117, 29);
 		frame.getContentPane().add(btnNewGame);
 	}
 }
