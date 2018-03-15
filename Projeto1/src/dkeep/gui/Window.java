@@ -51,9 +51,13 @@ public class Window {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 562, 377);
+		frame.setBounds(100, 100, 584, 436);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		
+		MapGraphics mapa = new MapGraphics();
+		mapa.setBounds(6, 68, 300, 300);
+		frame.getContentPane().add(mapa);
 		
 		JLabel lblState = new JLabel("You can start a new game!");
 		
@@ -92,14 +96,8 @@ public class Window {
 				System.exit(0);
 			}
 		});
-		btnExit.setBounds(374, 300, 117, 29);
+		btnExit.setBounds(399, 366, 117, 29);
 		frame.getContentPane().add(btnExit);
-		
-		JTextArea txtrSpace = new JTextArea();
-		txtrSpace.setFont(new Font("Courier New", Font.PLAIN, 15));
-		txtrSpace.setEditable(false);
-		txtrSpace.setBounds(6, 92, 272, 185);
-		frame.getContentPane().add(txtrSpace);
 		
 		btnLeft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -118,10 +116,11 @@ public class Window {
 				btnLeft.setEnabled(false);
 				btnUp.setEnabled(false);
 				}
-				txtrSpace.setText(game.toString());
+				mapa.setMap(game.getMap());
+				frame.repaint();
 			}
 		});
-		btnLeft.setBounds(306, 164, 84, 29);
+		btnLeft.setBounds(327, 164, 84, 29);
 		frame.getContentPane().add(btnLeft);
 		
 		btnUp.addActionListener(new ActionListener() {
@@ -141,10 +140,10 @@ public class Window {
 				btnLeft.setEnabled(false);
 				btnUp.setEnabled(false);
 				}
-				txtrSpace.setText(game.toString());
+				frame.repaint();
 			}
 		});
-		btnUp.setBounds(389, 136, 84, 29);
+		btnUp.setBounds(407, 124, 84, 29);
 		frame.getContentPane().add(btnUp);
 		
 		btnRight.addActionListener(new ActionListener() {
@@ -164,10 +163,10 @@ public class Window {
 				btnLeft.setEnabled(false);
 				btnUp.setEnabled(false);
 				}
-				txtrSpace.setText(game.toString());
+				frame.repaint();
 			}
 		});
-		btnRight.setBounds(472, 164, 84, 29);
+		btnRight.setBounds(490, 164, 84, 29);
 		frame.getContentPane().add(btnRight);
 		
 		btnDown.addActionListener(new ActionListener() {
@@ -187,13 +186,13 @@ public class Window {
 				btnLeft.setEnabled(false);
 				btnUp.setEnabled(false);
 				}
-				txtrSpace.setText(game.toString());
+				frame.repaint();
 			}
 		});
-		btnDown.setBounds(389, 192, 84, 29);
+		btnDown.setBounds(407, 204, 84, 29);
 		frame.getContentPane().add(btnDown);
 		
-		lblState.setBounds(6, 306, 333, 16);
+		lblState.setBounds(6, 379, 333, 16);
 		frame.getContentPane().add(lblState);
 
 		
@@ -220,16 +219,17 @@ public class Window {
 				
 				game = new Game(on, difc);
 				state = 0;
-				txtrSpace.setText(game.toString());
+				mapa.setMap(game.getMap());
 				lblState.setText("Click a direction button to move the hero!");
 				btnDown.setEnabled(true);
 				btnRight.setEnabled(true);
 				btnLeft.setEnabled(true);
 				btnUp.setEnabled(true);
+				frame.repaint();
 			}
 		});
 		
-		btnNewGame.setBounds(374, 17, 117, 29);
+		btnNewGame.setBounds(399, 32, 117, 29);
 		frame.getContentPane().add(btnNewGame);
 	}
 }

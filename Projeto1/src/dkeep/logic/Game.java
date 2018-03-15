@@ -20,6 +20,11 @@ public class Game
 	{
 		return player;
 	}
+	
+	public Map getMap()
+	{
+		return map;
+	}
 
 	public char getPos(int x, int y)
 	{

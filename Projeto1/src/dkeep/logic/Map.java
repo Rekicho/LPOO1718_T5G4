@@ -75,4 +75,9 @@ public class Map
 	{
 		map[y][x] = ch;
 	}
+	
+	public int length()
+	{
+		return map.length;
+	}
 }
