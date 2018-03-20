@@ -399,7 +399,7 @@ public class Game
 
 		for(int i = 0; i < ogreNumber; i++)
 		{
-			Weapon weapon = new Weapon(0,0);
+			Weapon weapon = new Weapon(4,1);
 			ogreClubs.add(weapon);
 		}
 	}
