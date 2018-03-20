@@ -6,12 +6,9 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.awt.BorderLayout;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
-import javax.swing.JTextArea;
-import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -86,7 +83,7 @@ public class Window {
 		
 		String[] options = {"Rookie","Drunken","Suspicious"};
 		
-		JComboBox comboBox = new JComboBox(options);
+		JComboBox<String> comboBox = new JComboBox<String>(options);
 		comboBox.setBounds(123, 45, 132, 16);
 		frame.getContentPane().add(comboBox);
 		

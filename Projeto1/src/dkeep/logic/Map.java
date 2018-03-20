@@ -1,7 +1,5 @@
 package dkeep.logic;
 
-import java.util.Arrays;
-
 public class Map 
 {
 	private char[][] map;
