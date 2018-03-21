@@ -11,6 +11,8 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Window {
 
@@ -39,6 +41,7 @@ public class Window {
 	 * Create the application.
 	 */
 	public Window() {
+		state = -1; //Start with value != 0
 		initialize();
 	}
 
@@ -115,6 +118,7 @@ public class Window {
 				}
 				mapa.setMap(game.getMap());
 				frame.repaint();
+				frame.requestFocusInWindow();
 			}
 		});
 		btnLeft.setBounds(327, 164, 84, 29);
@@ -138,6 +142,7 @@ public class Window {
 				btnUp.setEnabled(false);
 				}
 				frame.repaint();
+				frame.requestFocusInWindow();
 			}
 		});
 		btnUp.setBounds(407, 124, 84, 29);
@@ -161,6 +166,7 @@ public class Window {
 				btnUp.setEnabled(false);
 				}
 				frame.repaint();
+				frame.requestFocusInWindow();
 			}
 		});
 		btnRight.setBounds(490, 164, 84, 29);
@@ -184,6 +190,7 @@ public class Window {
 				btnUp.setEnabled(false);
 				}
 				frame.repaint();
+				frame.requestFocusInWindow();
 			}
 		});
 		btnDown.setBounds(407, 204, 84, 29);
@@ -217,16 +224,67 @@ public class Window {
 				game = new Game(on, difc);
 				state = 0;
 				mapa.setMap(game.getMap());
-				lblState.setText("Click a direction button to move the hero!");
+				lblState.setText("You can move!");
 				btnDown.setEnabled(true);
 				btnRight.setEnabled(true);
 				btnLeft.setEnabled(true);
 				btnUp.setEnabled(true);
 				frame.repaint();
+				frame.requestFocusInWindow();
 			}
 		});
 		
 		btnNewGame.setBounds(399, 32, 117, 29);
 		frame.getContentPane().add(btnNewGame);
+		
+		frame.addKeyListener(new KeyAdapter() 
+		{
+			public void keyPressed(KeyEvent e) 
+			{
+				if(state != 0)
+					return;
+				
+				int key = e.getKeyCode();
+				
+				switch(key)
+				{
+				case KeyEvent.VK_W:
+				case KeyEvent.VK_UP:
+					state = game.gameLogic('w');
+					break;
+				case KeyEvent.VK_A:
+				case KeyEvent.VK_LEFT:
+					state = game.gameLogic('a');
+					break;
+				case KeyEvent.VK_D:
+				case KeyEvent.VK_RIGHT:
+					state = game.gameLogic('d');
+					break;
+				case KeyEvent.VK_S:
+				case KeyEvent.VK_DOWN:
+					state = game.gameLogic('s');
+					break;
+				
+				default: return;
+				}
+
+				if(state != 0) 
+				{
+					if (state == 1) {
+						lblState.setText("You Lost, Bitch!");
+					}
+					if (state == 2) {
+						lblState.setText("You Won!");
+					}
+					
+					btnDown.setEnabled(false);
+					btnRight.setEnabled(false);
+					btnLeft.setEnabled(false);
+					btnUp.setEnabled(false);
+				}
+				mapa.setMap(game.getMap());
+				frame.repaint();
+			}
+		});
 	}
 }
