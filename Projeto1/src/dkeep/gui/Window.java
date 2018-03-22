@@ -237,6 +237,10 @@ public class Window {
 		btnNewGame.setBounds(399, 32, 117, 29);
 		frame.getContentPane().add(btnNewGame);
 		
+		JButton btnEditKeepLevel = new JButton("Edit Keep Level");
+		btnEditKeepLevel.setBounds(399, 68, 117, 29);
+		frame.getContentPane().add(btnEditKeepLevel);
+		
 		frame.addKeyListener(new KeyAdapter() 
 		{
 			public void keyPressed(KeyEvent e) 

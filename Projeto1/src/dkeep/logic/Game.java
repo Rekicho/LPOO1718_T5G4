@@ -340,7 +340,7 @@ public class Game
 		ogreClub.updatePos();
 	}
 
-	public boolean checkPossibleMov(Weapon ogreClub)
+	public boolean checkClubPossibleMov(Weapon ogreClub)
 	{
 		int[] pos = ogreClub.getPosition();
 		char esquerda = map.position(pos[0] - 1, pos[1]);
@@ -355,6 +355,18 @@ public class Game
 				esquerda == ' ' || direita == ' ' || cima == ' ' || baixo == ' '
 				||
 				esquerda == 'k' || direita == 'k' || cima == 'k' || baixo == 'k');
+
+	}
+	
+	public boolean checkOgrePossibleMov(Enemy ogre)
+	{
+		int[] pos = ogre.getPosition();
+		char esquerda = map.position(pos[0] - 1, pos[1]);
+		char direita = map.position(pos[0] + 1, pos[1]);
+		char cima = map.position(pos[0], pos[1] - 1);
+		char baixo = map.position(pos[0], pos[1] + 1);
+
+		return (esquerda != 'X' || direita != 'X' || cima != 'X' || baixo != 'X');
 
 	}
 
@@ -458,8 +470,6 @@ public class Game
 			{
 				Enemy ogre = enemies.get(i);
 
-				boolean randomFlag = true;
-
 				//Ogre movement
 
 				if(checkStun(ogre)) {
@@ -469,6 +479,8 @@ public class Game
 				}
 
 				if(!ogre.isStun()) {
+					boolean randomFlag = checkOgrePossibleMov(ogre);
+					
 					while (randomFlag) 
 					{
 						setRandMov(rng,ogre);
@@ -502,7 +514,7 @@ public class Game
 				Weapon ogreClub = ogreClubs.get(i);
 
 				ogreClub.setPosition(ogre.getPosition());
-				boolean randomFlag = checkPossibleMov(ogreClub);
+				boolean randomFlag = checkClubPossibleMov(ogreClub);
 
 				if(!randomFlag)
 					ogreClub.setSpeed(0, 0);
