@@ -42,6 +42,19 @@ public class Map
 		this.map = map;
 	}
 	
+	public void resize(int x, int y) {
+		map = new char[y][x];
+		
+		for(int j = 0; j < y; j++) {
+			for (int i = 0; i < x; i++) {
+				//if(j == 0 || j == y - 1 || i == 0 || i == x - 1)
+					map[j][i] = 'X';
+				
+				//else map[j][i] = ' ';
+			}
+		}
+	}
+	
 	public String toString()
 	{
 		String temp = "";
