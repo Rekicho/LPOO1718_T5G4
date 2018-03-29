@@ -12,54 +12,68 @@ public class DungeonKeep
 		return s.next().charAt(0);
 	}
 
-	public static void printGame(Game game)
+	private static void printGame(Game game)
 	{
 		System.out.println(game.toString());
 	}
 	
-	public static char getDifficulty(Scanner s)
-	{
-		System.out.print("Hello there! \n1 - Rookie \n2 - Drunken \n3 - Suspicious \nSelect dificulty: ");
-
-		return s.next().charAt(0);
-	}
-	
-	public static void tryAgain()
+	private static void tryAgain()
 	{
 		System.out.print("\n\n\nInvalid option! 1, 2 or 3, genius!\n\n\n");
 	}
-
-	public static void main(String[] args) 
+	
+	private static char getDifficulty(Scanner s)
 	{
-		Scanner s = new Scanner(System.in);
-		
-		int gameover = 0; //0 inside game, 1 gameover, 2 win
-		Game game = new Game();
-		
-		char diff = getDifficulty(s);
+		System.out.print("Hello there! \n1 - Rookie \n2 - Drunken \n3 - Suspicious \nSelect dificulty: ");
+
+		char diff = s.next().charAt(0);
 		
 		while(!(diff == '1' || diff == '2' || diff == '3'))
 		{
 			tryAgain();			
-			diff = getDifficulty(s);
+			System.out.print("Hello there! \n1 - Rookie \n2 - Drunken \n3 - Suspicious \nSelect dificulty: ");
+			diff = s.next().charAt(0);
 		}
 		
-		game.selectDifficulty(diff);
-
+		return diff;
+	}
+	
+	public static int gameloop(Game game, Scanner s)
+	{
+		int gameover = 0;
+		
 		while (gameover == 0)
 		{
 			printGame(game);
 			char ch = getInput(s);
 			gameover = game.gameLogic(ch);		
 		}
-
-		printGame(game);
-
+		
+		return gameover;
+	}
+	
+	private static void printGameOverMessage(int gameover) 
+	{
 		if(gameover == 1)
 			System.out.println("GameOver!");
 		
 		if(gameover == 2)
 			System.out.println("Fuerte chico!");
+	}
+
+	public static void main(String[] args) 
+	{
+		Scanner s = new Scanner(System.in);
+		
+		Game game = new Game();
+		
+		game.selectDifficulty(getDifficulty(s));
+		
+		int gameover = gameloop(game, s);
+
+		printGame(game);
+		
+		printGameOverMessage(gameover);
 
 		s.close();
 	}
