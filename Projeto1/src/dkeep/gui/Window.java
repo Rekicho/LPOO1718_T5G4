@@ -1,6 +1,7 @@
 package dkeep.gui;
 
 import dkeep.logic.Game;
+import dkeep.logic.Map;
 
 import java.awt.EventQueue;
 
@@ -20,6 +21,7 @@ public class Window {
 	private JTextField textField;
 	private Game game;
 	private int state;
+	private Map level2map;
 
 	/**
 	 * Launch the application.
@@ -41,6 +43,7 @@ public class Window {
 	 * Create the application.
 	 */
 	public Window() {
+		level2map = new Map(2);
 		state = -1; //Start with value != 0
 		initialize();
 	}
@@ -54,6 +57,10 @@ public class Window {
 		frame.setBounds(100, 100, 584, 436);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		
+		Edit edit = new Edit(level2map);
+		edit.setVisible(true);
+		
 		
 		MapGraphics mapa = new MapGraphics();
 		mapa.setBounds(6, 68, 300, 300);
@@ -237,13 +244,13 @@ public class Window {
 		btnNewGame.setBounds(399, 32, 117, 29);
 		frame.getContentPane().add(btnNewGame);
 		
-		JButton btnEditKeepLevel = new JButton("Edit Keep Level");
+		JButton btnEditKeepLevel = new JButton("Edit Keep");
 		btnEditKeepLevel.setBounds(399, 68, 117, 29);
 		frame.getContentPane().add(btnEditKeepLevel);
 		
 		frame.addKeyListener(new KeyAdapter() 
 		{
-			public void keyPressed(KeyEvent e) 
+			public void keyReleased(KeyEvent e) 
 			{
 				if(state != 0)
 					return;
@@ -275,7 +282,7 @@ public class Window {
 				if(state != 0) 
 				{
 					if (state == 1) {
-						lblState.setText("You Lost, Bitch!");
+						lblState.setText("You Lost!");
 					}
 					if (state == 2) {
 						lblState.setText("You Won!");
