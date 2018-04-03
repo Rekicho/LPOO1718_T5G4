@@ -87,18 +87,17 @@ public class Window {
 		frame.requestFocusInWindow();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
+	private void createFrame()
+	{
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 584, 436);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
-		lblState = new JLabel("You can start a new game!");
-		
+	}
+	
+	private void createEdit()
+	{
 		edit = new Edit(level2map);
 		edit.setVisible(false);
 		edit.addWindowListener(new WindowAdapter() 
@@ -127,12 +126,17 @@ public class Window {
 	            }
 
 	        });
-		
-		
+	}
+	
+	private void createMapa()
+	{
 		mapa = new MapGraphics();
 		mapa.setBounds(6, 68, 300, 300);
 		frame.getContentPane().add(mapa);
-		
+	}
+	
+	private void createButtons()
+	{
 		btnUp = new JButton("Up");
 		btnDown = new JButton("Down");
 		btnLeft = new JButton("Left");
@@ -142,6 +146,19 @@ public class Window {
 		btnRight.setEnabled(false);
 		btnLeft.setEnabled(false);
 		btnUp.setEnabled(false);
+	}
+	
+	
+	
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {	
+		createFrame();
+		lblState = new JLabel("You can start a new game!");
+		createEdit();
+		createMapa();
+		createButtons();
 		
 		lblNumberOfOgres = new JLabel("Number of Ogres");
 		lblNumberOfOgres.setBounds(6, 17, 132, 16);
