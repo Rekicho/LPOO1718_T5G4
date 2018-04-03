@@ -70,7 +70,7 @@ public class Window {
 		if(state != 0) 
 		{
 			if (state == 1) {
-				lblState.setText("You Lost, Bitch!");
+				lblState.setText("You Lost!");
 			}
 			if (state == 2) {
 				lblState.setText("You Won!");
@@ -82,7 +82,6 @@ public class Window {
 		btnLeft.setEnabled(false);
 		btnUp.setEnabled(false);
 		}
-		mapa.setMap(game.getMap());
 		frame.repaint();
 		frame.requestFocusInWindow();
 	}
@@ -135,58 +134,40 @@ public class Window {
 		frame.getContentPane().add(mapa);
 	}
 	
-	private void createButtons()
+	private void createUpButton()
 	{
 		btnUp = new JButton("Up");
-		btnDown = new JButton("Down");
-		btnLeft = new JButton("Left");
-		btnRight = new JButton("Right");
-		
-		btnDown.setEnabled(false);
-		btnRight.setEnabled(false);
-		btnLeft.setEnabled(false);
 		btnUp.setEnabled(false);
-	}
-	
-	
-	
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {	
-		createFrame();
-		lblState = new JLabel("You can start a new game!");
-		createEdit();
-		createMapa();
-		createButtons();
 		
-		lblNumberOfOgres = new JLabel("Number of Ogres");
-		lblNumberOfOgres.setBounds(6, 17, 132, 16);
-		frame.getContentPane().add(lblNumberOfOgres);
-		
-		textField = new JTextField();
-		textField.setBounds(123, 17, 37, 17);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
-		
-		lblGuardPersonality = new JLabel("Guard Personality");
-		lblGuardPersonality.setBounds(6, 45, 132, 16);
-		frame.getContentPane().add(lblGuardPersonality);
-		
-		String[] options = {"Rookie","Drunken","Suspicious"};
-		
-		comboBox = new JComboBox(options);
-		comboBox.setBounds(123, 45, 132, 16);
-		frame.getContentPane().add(comboBox);
-		
-		btnExit = new JButton("Exit");
-		btnExit.addActionListener(new ActionListener() {
+		btnUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				state = game.gameLogic('w');
+				checkGameState();
 			}
 		});
-		btnExit.setBounds(399, 366, 117, 29);
-		frame.getContentPane().add(btnExit);
+		btnUp.setBounds(407, 124, 84, 29);
+		frame.getContentPane().add(btnUp);
+	}
+	
+	private void createDownButton()
+	{
+		btnDown = new JButton("Down");
+		btnDown.setEnabled(false);
+		
+		btnDown.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				state = game.gameLogic('s');
+				checkGameState();
+			}
+		});
+		btnDown.setBounds(407, 204, 84, 29);
+		frame.getContentPane().add(btnDown);
+	}
+	
+	private void createLeftButton()
+	{
+		btnLeft = new JButton("Left");
+		btnLeft.setEnabled(false);
 		
 		btnLeft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -197,15 +178,12 @@ public class Window {
 		});
 		btnLeft.setBounds(327, 164, 84, 29);
 		frame.getContentPane().add(btnLeft);
-		
-		btnUp.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				state = game.gameLogic('w');
-				checkGameState();
-			}
-		});
-		btnUp.setBounds(407, 124, 84, 29);
-		frame.getContentPane().add(btnUp);
+	}
+	
+	private void createRightButton()
+	{
+		btnRight = new JButton("Right");
+		btnRight.setEnabled(false);
 		
 		btnRight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -215,20 +193,68 @@ public class Window {
 		});
 		btnRight.setBounds(490, 164, 84, 29);
 		frame.getContentPane().add(btnRight);
+	}
+	
+	private void createMovementButtons()
+	{
+		createUpButton();
+		createDownButton();
+		createLeftButton();
+		createRightButton();
+	}
+	
+	private void createNumberofOgres()
+	{
+		lblNumberOfOgres = new JLabel("Number of Ogres");
+		lblNumberOfOgres.setBounds(6, 17, 132, 16);
+		frame.getContentPane().add(lblNumberOfOgres);
+	}
+	
+	private void createTextField()
+	{
+		textField = new JTextField();
+		textField.setBounds(123, 17, 37, 17);
+		frame.getContentPane().add(textField);
+		textField.setColumns(10);
+	}
+	
+	private void createGuardPersonality()
+	{
+		lblGuardPersonality = new JLabel("Guard Personality");
+		lblGuardPersonality.setBounds(6, 45, 132, 16);
+		frame.getContentPane().add(lblGuardPersonality);
+	}
+	
+	private void createComboBox()
+	{
+		String[] options = {"Rookie","Drunken","Suspicious"};
 		
-		btnDown.addActionListener(new ActionListener() {
+		comboBox = new JComboBox(options);
+		comboBox.setBounds(123, 45, 132, 16);
+		frame.getContentPane().add(comboBox);
+	}
+	
+	public void createExitButton()
+	{
+		btnExit = new JButton("Exit");
+		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				state = game.gameLogic('s');
-				checkGameState();
+				System.exit(0);
 			}
 		});
-		btnDown.setBounds(407, 204, 84, 29);
-		frame.getContentPane().add(btnDown);
-		
+		btnExit.setBounds(399, 366, 117, 29);
+		frame.getContentPane().add(btnExit);
+	}
+	
+	private void createLabelState()
+	{
+		lblState = new JLabel("You can start a new game!");
 		lblState.setBounds(6, 379, 383, 16);
 		frame.getContentPane().add(lblState);
-
-		
+	}
+	
+	private void createNewGame()
+	{
 		btnNewGame = new JButton("New Game");
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -267,7 +293,10 @@ public class Window {
 		
 		btnNewGame.setBounds(399, 32, 117, 29);
 		frame.getContentPane().add(btnNewGame);
-		
+	}
+	
+	private void createEditButton()
+	{
 		btnEditKeepLevel = new JButton("Edit Keep");
 		btnEditKeepLevel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -277,7 +306,10 @@ public class Window {
 		});
 		btnEditKeepLevel.setBounds(399, 68, 117, 29);
 		frame.getContentPane().add(btnEditKeepLevel);
-		
+	}
+	
+	private void createKeyListener()
+	{
 		frame.addKeyListener(new KeyAdapter() 
 		{
 			public void keyReleased(KeyEvent e) 
@@ -327,5 +359,24 @@ public class Window {
 				frame.repaint();
 			}
 		});
+	}
+	
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {	
+		createFrame();
+		createMapa();
+		createNewGame();
+		createKeyListener();
+		createEdit();
+		createEditButton();
+		createExitButton();
+		createMovementButtons();
+		createLabelState();
+		createNumberofOgres();
+		createTextField();
+		createGuardPersonality();
+		createComboBox();
 	}
 }
