@@ -24,39 +24,57 @@ public class Edit extends JFrame {
 	private JTextField textField_1;
 	private JTextField textField_2;
 	private JTextField textField_3;
+	private MapGraphics mapgui;
+	private JComboBox comboBox;
+	private JLabel lblSize;
+	private JLabel lblX;
+	
 	private Map mapa;
 
-	/**
-	 * Create the frame.
-	 */
-	public Edit(Map mapa) {
+	
+	private void createFrame()
+	{
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 554, 441);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		this.mapa = mapa;
-		MapGraphics mapgui = new MapGraphics();
+	}
+	
+	private void createMapGUI()
+	{
+		mapgui = new MapGraphics();
 		mapgui.setMap(mapa);
 		
 		mapgui.setBounds(6, 68, 300, 300);
 		contentPane.add(mapgui);
-		
+	}
+	
+	private void createComboBox()
+	{
 		String[] options = {"Hero", "Ogre", "Key", "Wall", "Exit Door"};
-		JComboBox comboBox = new JComboBox(options);
+		comboBox = new JComboBox(options);
 		comboBox.setBounds(382, 12, 137, 19);
 		contentPane.add(comboBox);
-		
-		JLabel lblSize = new JLabel("Size");
+	}
+	
+	private void createSizeLabel()
+	{
+		lblSize = new JLabel("Size");
 		lblSize.setBounds(10, 11, 31, 20);
 		contentPane.add(lblSize);
-		
-		JLabel lblX = new JLabel("x");
+	}
+	
+	private void createXLabel()
+	{
+		lblX = new JLabel("x");
 		lblX.setBounds(83, 11, 9, 19);
 		contentPane.add(lblX);
-		
+	}
+	
+	private void createTextFields()
+	{
 		textField = new JTextField();
 		textField.setText("9");
 		textField.setBounds(90, 10, 46, 20);
@@ -69,6 +87,19 @@ public class Edit extends JFrame {
 		textField_1.setBounds(39, 10, 46, 20);
 		contentPane.add(textField_1);
 		
+		textField_2 = new JTextField();
+		textField_2.setBounds(473, 43, 46, 29);
+		contentPane.add(textField_2);
+		textField_2.setColumns(10);
+				
+		textField_3 = new JTextField();
+		textField_3.setColumns(10);
+		textField_3.setBounds(473, 79, 46, 29);
+		contentPane.add(textField_3);
+	}
+	
+	private void createButtonCreateField()
+	{
 		JButton btnCreateField = new JButton("Create Field");
 		btnCreateField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -84,11 +115,20 @@ public class Edit extends JFrame {
 		});
 		btnCreateField.setBounds(139, 7, 117, 29);
 		contentPane.add(btnCreateField);
-		
-		textField_2 = new JTextField();
-		textField_2.setBounds(473, 43, 46, 29);
-		contentPane.add(textField_2);
-		textField_2.setColumns(10);
+	}
+	
+	/**
+	 * Create the frame.
+	 */
+	public Edit(Map mapa) {
+		createFrame();
+		this.mapa = mapa;
+		createMapGUI();
+		createComboBox();
+		createSizeLabel();
+		createXLabel();
+		createTextFields();
+		createButtonCreateField();
 		
 		JLabel lblXPosition = new JLabel("X Position");
 		lblXPosition.setBounds(392, 48, 74, 19);
@@ -101,11 +141,6 @@ public class Edit extends JFrame {
 		JLabel lblNewLabel = new JLabel("You can edit the level!");
 		lblNewLabel.setBounds(16, 377, 290, 14);
 		contentPane.add(lblNewLabel);
-		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		textField_3.setBounds(473, 79, 46, 29);
-		contentPane.add(textField_3);
 		
 		JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {

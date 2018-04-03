@@ -40,9 +40,9 @@ public class DungeonKeep
 	
 	public static int gameloop(Game game, Scanner s)
 	{
-		int gameover = 0;
+		int gameover = Game.PLAYING;
 		
-		while (gameover == 0)
+		while (gameover == Game.PLAYING)
 		{
 			printGame(game);
 			char ch = getInput(s);
@@ -54,10 +54,10 @@ public class DungeonKeep
 	
 	private static void printGameOverMessage(int gameover) 
 	{
-		if(gameover == 1)
+		if(gameover == Game.GAMEOVER)
 			System.out.println("GameOver!");
 		
-		if(gameover == 2)
+		else if(gameover == Game.WIN)
 			System.out.println("Fuerte chico!");
 	}
 

@@ -7,15 +7,33 @@ import java.util.Arrays;
 public class Game 
 {
 	private static final char ARMED_HERO = 'A';
+	private static final char HERO_WITH_KEY = 'K';
+	private static final char OGRE = '0';
+	private static final char STUNNED_OGRE = '8';
 	private static final char STAIR = 'S';
 	private static final char DOOR = 'I';
 	private static final char WALL = 'X';
 	private static final char KEY = 'k';
+	private static final char HIDDEN_KEY = '$';
+	private static final char OGRE_CLUB = '*';
 	private static final char NOTHING = ' ';
 	
 	public static final char ROOKIE = '1';
 	public static final char DRUNKEN = '2';
 	public static final char SUSPICIOUS = '3';
+	
+	public static final int GUARD_X = 8;
+	public static final int GUARD_Y = 1;
+	
+	public static final int HERO_L1_X = 1;
+	public static final int HERO_L1_Y = 1;
+	
+	public static final int DEFAULT_MAX_OGRE_NUM = 3;
+	
+	public static final int VALID_MOVEMENT = -1;
+	public static final int PLAYING = 0;
+	public static final int GAMEOVER = 1;
+	public static final int WIN = 2;
 	
 	private int level;
 	private int flag;
@@ -71,7 +89,7 @@ public class Game
 	{
 		Random rng = new Random();
 		
-		ogreNumber = rng.nextInt(3) + 1;
+		ogreNumber = rng.nextInt(DEFAULT_MAX_OGRE_NUM) + 1;
 		level = 1;
 		setupLevel1();		
 	}
@@ -186,11 +204,11 @@ public class Game
 		Enemy enemy;
 
 		if (i == ROOKIE) 
-			enemy = new GuardRookie(8,1);
+			enemy = new GuardRookie(GUARD_X,GUARD_Y);
 		else if (i == DRUNKEN) 
-			enemy = new GuardDrunken(8,1);
+			enemy = new GuardDrunken(GUARD_X,GUARD_Y);
 		else if (i == SUSPICIOUS)
-			enemy = new GuardSuspicious(8,1);
+			enemy = new GuardSuspicious(GUARD_X,GUARD_Y);
 		
 		else return;
 
@@ -201,26 +219,12 @@ public class Game
 	{
 		lever = false;
 		map = new Map(level);
-		player = new Hero(1,1);
+		player = new Hero(HERO_L1_X,HERO_L1_Y);
 		enemies = new ArrayList<Enemy>(1);
 	}
 
-	//Parei revisao aqui
-	public int level1(char ch) 
+	private int level1Movement(Enemy guard)
 	{
-		Enemy enemy = enemies.get(0);
-		flag = player.updateSpeed(ch);
-
-		if(flag != -1)
-			return flag;
-
-		flag = 0;
-
-		if(checkWin())
-			flag = 2;
-
-		enemy.updateSpeed(enemy.getMove());
-
 		if (checkValidMove(player))
 		{
 			if(lever)
@@ -236,18 +240,39 @@ public class Game
 			if(!lever)
 				move(player);
 
-			if(checkOverlap(enemy))
+			if(checkOverlap(guard))
 			{
-				flag = 1;
+				flag = GAMEOVER;
 				return flag;
 			}
 
-			move(enemy);
-			enemy.advanceGuard();
+			move(guard);
+			guard.advanceGuard();
 		}
+		
+		return flag;
+	}
+	
+	public int level1(char ch) 
+	{
+		Enemy enemy = enemies.get(0);
+		flag = player.updateSpeed(ch);
 
-		if (flag != 2 && checkGameOver(enemy))
-			flag = 1;
+		if(flag != VALID_MOVEMENT)
+			return flag;
+
+		flag = PLAYING;
+
+		if(checkWin())
+			flag = WIN;
+
+		enemy.updateSpeed(enemy.getMove());
+		
+		if(level1Movement(enemy) == GAMEOVER)
+			return flag;
+
+		if (flag != WIN && checkGameOver(enemy))
+			flag = GAMEOVER;
 
 		return flag;
 	}
@@ -280,13 +305,13 @@ public class Game
 	{
 		int[] pos = ogreClub.getPosition();
 
-		if (map.position(pos[0], pos[1]) == '$')
+		if (map.position(pos[0], pos[1]) == HIDDEN_KEY)
 			map.setPosition(pos[0], pos[1], KEY);
 
 		else map.setPosition(pos[0], pos[1], NOTHING);
 	}
 
-	public void setRandMov(Random rng, Enemy en)
+	private void setRandMov(Random rng, Enemy en)
 	{
 		int r1, r2;
 
@@ -304,6 +329,7 @@ public class Game
 		else en.setSpeed(mov,0);	
 	}
 
+	//TODO: Refactor
 	public void moveOgre(Enemy og, int ref) 
 	{
 		int[] pos = og.getPosition();
@@ -319,14 +345,14 @@ public class Game
 			{
 				unique = false;
 
-				if(og.getCaracter() == '8')
+				if(og.getCaracter() == STUNNED_OGRE)
 					anyStun = true;
 
 				else anyActive = true;
 			}
 		}
 
-		if (map.position(pos[0], pos[1]) == '$')
+		if (map.position(pos[0], pos[1]) == HIDDEN_KEY)
 		{
 			if(unique)
 				map.setPosition(pos[0], pos[1], KEY);
@@ -335,41 +361,41 @@ public class Game
 		else if(!unique)
 		{
 			if(!anyActive && anyStun)
-				map.setPosition(pos[0], pos[1], '8');
+				map.setPosition(pos[0], pos[1], STUNNED_OGRE);
 		}	
 
 		else map.setPosition(pos[0], pos[1], NOTHING);
 
 
 
-		if(map.position(pos[0]+ speed[0], pos[1] + speed[1]) == '$')
+		if(map.position(pos[0]+ speed[0], pos[1] + speed[1]) == HIDDEN_KEY)
 		{
 			og.updatePos();
 			return;
 		}
 
 		if(map.position(pos[0]+ speed[0], pos[1] + speed[1]) == KEY)
-			map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], '$');
+			map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], HIDDEN_KEY);
 
-		else map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], '0');
+		else map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], OGRE);
 
 		og.updatePos();
 	}
 
-	public void moveOgreClub(Weapon ogreClub) 
+	private void moveOgreClub(Weapon ogreClub) 
 	{
 		int[] pos = ogreClub.getPosition();
 		int[] speed = ogreClub.getSpeed();
 
 		if(map.position(pos[0]+ speed[0], pos[1] + speed[1]) == KEY)
-			map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], '$');
+			map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], HIDDEN_KEY);
 
-		else map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], '*');
+		else map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], OGRE_CLUB);
 
 		ogreClub.updatePos();
 	}
 
-	public boolean checkClubPossibleMov(Weapon ogreClub)
+	private boolean checkClubPossibleMov(Weapon ogreClub)
 	{
 		int[] pos = ogreClub.getPosition();
 		char esquerda = map.position(pos[0] - 1, pos[1]);
@@ -377,7 +403,7 @@ public class Game
 		char cima = map.position(pos[0], pos[1] - 1);
 		char baixo = map.position(pos[0], pos[1] + 1);
 
-		return (esquerda == 'K' || direita == 'K' || cima == 'K' || baixo == 'K'
+		return (esquerda == HERO_WITH_KEY || direita == HERO_WITH_KEY || cima == HERO_WITH_KEY || baixo == HERO_WITH_KEY
 				||
 				esquerda == ARMED_HERO || direita == ARMED_HERO || cima == ARMED_HERO || baixo == ARMED_HERO
 				||
@@ -387,7 +413,7 @@ public class Game
 
 	}
 	
-	public boolean checkOgrePossibleMov(Enemy ogre)
+	private boolean checkOgrePossibleMov(Enemy ogre)
 	{
 		int[] pos = ogre.getPosition();
 		char esquerda = map.position(pos[0] - 1, pos[1]);
@@ -399,27 +425,28 @@ public class Game
 
 	}
 
-	public boolean checkClubValidMove(Person p)
+	private boolean checkClubValidMove(Person p)
 	{
 		int[] pos = p.getPosition();
 		int[] speed = p.getSpeed();
 		char nextPos = map.position(pos[0] + speed[0],pos[1] + speed[1]);
 
-		return (nextPos != WALL && nextPos != DOOR && nextPos != '0' && nextPos != '8' && nextPos != '*' && nextPos != '$');
+		return (nextPos != WALL && nextPos != DOOR && nextPos != OGRE && nextPos != STUNNED_OGRE && nextPos != OGRE_CLUB && nextPos != HIDDEN_KEY);
 	}
 
-	public boolean checkStun(Enemy enemy) {
+	private boolean checkStun(Enemy enemy) {
 		int[] pos = enemy.getPosition();
 		char esquerda = map.position(pos[0] - 1, pos[1]);
 		char direita = map.position(pos[0] + 1, pos[1]);
 		char cima = map.position(pos[0], pos[1] - 1);
 		char baixo = map.position(pos[0], pos[1] + 1);
 
-		return(esquerda == 'K' || direita == 'K' || cima == 'K' || baixo == 'K'
+		return(esquerda == HERO_WITH_KEY || direita == HERO_WITH_KEY || cima == HERO_WITH_KEY || baixo == HERO_WITH_KEY
 				||
 				esquerda == ARMED_HERO || direita == ARMED_HERO || cima == ARMED_HERO || baixo == ARMED_HERO);
 	}
 
+	//TODO: Refactor
 	public void setupLevel2()
 	{
 		club = false;
@@ -445,6 +472,7 @@ public class Game
 		}
 	}
 	
+	//TODO: Refactor
 	public void setupEditedKeep()
 	{
 		club = false;
@@ -463,8 +491,6 @@ public class Game
 		
 		int[] ogresPos = map.getOgrePos(ogreNumber);
 
-		
-		//TODO: GET OGRE POSITIONS
 		for(int i = 0; i < ogreNumber * 2; i+= 2)
 		{
 			Enemy enemy = new Ogre(ogresPos[i],ogresPos[i+1]);
@@ -478,6 +504,7 @@ public class Game
 		}
 	}
 
+	//TODO: Refactor
 	public int level2(char ch, boolean ogreNeedsMove) 
 	{
 		Random rng = new Random();
@@ -494,7 +521,7 @@ public class Game
 
 		boolean waste = false;
 
-		if (movingToDoor() && player.getCaracter() == 'K') 
+		if (movingToDoor() && player.getCaracter() == HERO_WITH_KEY) 
 		{
 			waste = true;
 			openDoor();
@@ -507,7 +534,7 @@ public class Game
 			if(!waste)
 			{
 				if(pickupKey())
-					player.setCaracter('K');
+					player.setCaracter(HERO_WITH_KEY);
 
 				move(player);
 			}
@@ -537,7 +564,7 @@ public class Game
 				if(checkStun(ogre)) {
 					int[] pos = ogre.getPosition();
 					ogre.gotHit();
-					map.setPosition(pos[0], pos[1], '8');
+					map.setPosition(pos[0], pos[1], STUNNED_OGRE);
 				}
 
 				if(!ogre.isStun()) {
@@ -562,8 +589,8 @@ public class Game
 							if(checkStun(ogre)) {
 								int[] pos = ogre.getPosition();
 								ogre.gotHit();
-								if(map.position(pos[0], pos[1]) != '$')
-									map.setPosition(pos[0], pos[1], '8');
+								if(map.position(pos[0], pos[1]) != HIDDEN_KEY)
+									map.setPosition(pos[0], pos[1], STUNNED_OGRE);
 							}
 						}	
 					}
@@ -614,6 +641,7 @@ public class Game
 		return flag;
 	}
 
+	//TODO: Refactor
 	public int gameLogic(char ch)
 	{
 		if (level == 1)
