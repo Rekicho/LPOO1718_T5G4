@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Window {
 
@@ -22,7 +24,7 @@ public class Window {
 	private Game game;
 	private int state;
 	private Map level2map;
-
+	private Map level2validmap;
 	/**
 	 * Launch the application.
 	 */
@@ -44,7 +46,7 @@ public class Window {
 	 */
 	public Window() {
 		level2map = new Map(2);
-		state = -1; //Start with value != 0
+		state = -1;
 		initialize();
 	}
 
@@ -58,15 +60,41 @@ public class Window {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
+		JLabel lblState = new JLabel("You can start a new game!");
+		
 		Edit edit = new Edit(level2map);
-		edit.setVisible(true);
+		edit.setVisible(false);
+		edit.addWindowListener(new WindowAdapter() 
+		{
+	            public void windowClosed(WindowEvent e) 
+	            {
+	            	if(level2map.checkValid())
+	            	{
+	            		level2validmap = level2map.clone();
+	            		
+	            		if(game == null)
+	            			lblState.setText("Keep map edited!");
+	            		
+	            		else if(game.getLevel() != 2)
+	            		{
+	            			game.setKeep(level2validmap.clone());
+	            			lblState.setText("Keep map edited!");
+	            		}
+	            		
+	            		else lblState.setText("Can't edit Keep while playing it, it will be changed for next game!");
+	            	}
+	            	
+	            	else lblState.setText("Edited map isn't valid! Keep map wasn't changed!");
+	                frame.setVisible(true);
+	                frame.requestFocusInWindow();
+	            }
+
+	        });
 		
 		
 		MapGraphics mapa = new MapGraphics();
 		mapa.setBounds(6, 68, 300, 300);
 		frame.getContentPane().add(mapa);
-		
-		JLabel lblState = new JLabel("You can start a new game!");
 		
 		JButton btnUp = new JButton("Up");
 		JButton btnDown = new JButton("Down");
@@ -93,7 +121,7 @@ public class Window {
 		
 		String[] options = {"Rookie","Drunken","Suspicious"};
 		
-		JComboBox<String> comboBox = new JComboBox<String>(options);
+		JComboBox comboBox = new JComboBox(options);
 		comboBox.setBounds(123, 45, 132, 16);
 		frame.getContentPane().add(comboBox);
 		
@@ -118,6 +146,7 @@ public class Window {
 						lblState.setText("You Won!");
 					}
 					
+				game = null;
 				btnDown.setEnabled(false);
 				btnRight.setEnabled(false);
 				btnLeft.setEnabled(false);
@@ -143,6 +172,7 @@ public class Window {
 						lblState.setText("You Won!");
 					}
 					
+				game = null;
 				btnDown.setEnabled(false);
 				btnRight.setEnabled(false);
 				btnLeft.setEnabled(false);
@@ -167,6 +197,7 @@ public class Window {
 						lblState.setText("You Won!");
 					}
 					
+				game = null;
 				btnDown.setEnabled(false);
 				btnRight.setEnabled(false);
 				btnLeft.setEnabled(false);
@@ -190,7 +221,8 @@ public class Window {
 					if (state == 2) {
 						lblState.setText("You Won!");
 					}
-					
+				
+				game = null;
 				btnDown.setEnabled(false);
 				btnRight.setEnabled(false);
 				btnLeft.setEnabled(false);
@@ -203,7 +235,7 @@ public class Window {
 		btnDown.setBounds(407, 204, 84, 29);
 		frame.getContentPane().add(btnDown);
 		
-		lblState.setBounds(6, 379, 333, 16);
+		lblState.setBounds(6, 379, 383, 16);
 		frame.getContentPane().add(lblState);
 
 		
@@ -229,6 +261,8 @@ public class Window {
 				}
 				
 				game = new Game(on, difc);
+				if(level2validmap != null)
+					game.setKeep(level2validmap.clone());
 				state = 0;
 				mapa.setMap(game.getMap());
 				lblState.setText("You can move!");
@@ -245,6 +279,12 @@ public class Window {
 		frame.getContentPane().add(btnNewGame);
 		
 		JButton btnEditKeepLevel = new JButton("Edit Keep");
+		btnEditKeepLevel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				edit.setVisible(true);
+			}
+		});
 		btnEditKeepLevel.setBounds(399, 68, 117, 29);
 		frame.getContentPane().add(btnEditKeepLevel);
 		

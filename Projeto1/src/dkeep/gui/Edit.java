@@ -14,6 +14,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 public class Edit extends JFrame {
@@ -29,8 +30,8 @@ public class Edit extends JFrame {
 	 * Create the frame.
 	 */
 	public Edit(Map mapa) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 554, 414);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 554, 441);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -97,25 +98,98 @@ public class Edit extends JFrame {
 		lblYPosition.setBounds(392, 83, 74, 19);
 		contentPane.add(lblYPosition);
 		
+		JLabel lblNewLabel = new JLabel("You can edit the level!");
+		lblNewLabel.setBounds(16, 377, 290, 14);
+		contentPane.add(lblNewLabel);
+		
 		textField_3 = new JTextField();
 		textField_3.setColumns(10);
 		textField_3.setBounds(473, 79, 46, 29);
 		contentPane.add(textField_3);
 		
 		JButton btnAdd = new JButton("Add");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				int x = Integer.parseInt(textField_2.getText());
+				int y = Integer.parseInt(textField_3.getText());
+				
+				if((x == 0 || y == 0 || x == mapa.length(0) - 1 || y == mapa.length() - 1) 
+					&& 
+				   (comboBox.getSelectedItem() != "Exit Door" && comboBox.getSelectedItem() != "Wall"))
+				{
+					lblNewLabel.setText("Only door and wall can be added on the map ends!");
+					return;
+				}
+				
+				if(comboBox.getSelectedItem() == "Hero")
+				{
+					mapa.setPosition(x, y, 'H');
+				}
+				
+				else if(comboBox.getSelectedItem() == "Ogre")
+				{
+					mapa.setPosition(x, y, '0');
+				}
+				
+				else if(comboBox.getSelectedItem() == "Key")
+				{
+					mapa.setPosition(x, y, 'k');
+				}
+				
+				else if(comboBox.getSelectedItem() == "Wall")
+				{
+					mapa.setPosition(x, y, 'X');
+				}
+				
+				else if(comboBox.getSelectedItem() == "Exit Door")
+				{
+					if(x == 0 && y == 0 || x == mapa.length(0) - 1 && y == 0 || x == 0 && y == mapa.length() - 1 || x == mapa.length(0) - 1 && y == mapa.length() - 1) 
+					{
+						lblNewLabel.setText("That place is unreacheable!");
+						return;
+					}	
+					
+					
+					mapa.setPosition(x, y, 'I');
+				}
+				
+				contentPane.repaint();
+			}
+		});
 		btnAdd.setBounds(402, 114, 117, 29);
 		contentPane.add(btnAdd);
 		
 		JButton btnRemove = new JButton("Remove");
+		btnRemove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int x = Integer.parseInt(textField_2.getText());
+				int y = Integer.parseInt(textField_3.getText());
+				
+				if(x == 0 || y == 0 || x == mapa.length(0) - 1 || y == mapa.length() - 1)
+					mapa.setPosition(x, y, 'X');
+				
+				else mapa.setPosition(x, y, ' ');
+				
+				contentPane.repaint();
+			}
+		});
 		btnRemove.setBounds(402, 143, 117, 29);
 		contentPane.add(btnRemove);
 		
-		JButton btnCancel = new JButton("Cancel");
-		btnCancel.setBounds(402, 302, 117, 29);
-		contentPane.add(btnCancel);
-		
 		JButton btnFinish = new JButton("Finish");
-		btnFinish.setBounds(402, 273, 117, 29);
+		btnFinish.setBounds(402, 370, 117, 29);
+		btnFinish.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				closeFrame();
+			}
+		});
 		contentPane.add(btnFinish);
+	}
+	
+	public void closeFrame()
+	{
+		super.dispose();
 	}
 }

@@ -28,7 +28,7 @@ public class DungeonKeep
 
 		char diff = s.next().charAt(0);
 		
-		while(!(diff == '1' || diff == '2' || diff == '3'))
+		while(!(diff == Game.ROOKIE || diff == Game.DRUNKEN || diff == Game.SUSPICIOUS))
 		{
 			tryAgain();			
 			System.out.print("Hello there! \n1 - Rookie \n2 - Drunken \n3 - Suspicious \nSelect dificulty: ");

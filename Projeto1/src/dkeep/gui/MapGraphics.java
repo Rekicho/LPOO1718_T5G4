@@ -122,9 +122,9 @@ public class MapGraphics extends JPanel
 		
 		g.setColor(Color.BLACK);
 		
-		for(int x = 0; x < mapa.length(); x++)
+		for(int y = 0; y < mapa.length(); y++)
 		{
-			for(int y = 0; y < mapa.length(); y++)
+			for(int x = 0; x < mapa.length(y); x++)
 			{
 				
 				switch(mapa.position(x, y)) {
