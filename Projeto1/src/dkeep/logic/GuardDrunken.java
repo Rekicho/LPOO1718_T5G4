@@ -2,7 +2,16 @@ package dkeep.logic;
 
 import java.util.Random;
 
-public class GuardDrunken extends Enemy {
+public class GuardDrunken extends Enemy 
+{
+	private static final int NORMAL = 1;
+	private static final int REVERSE = -1;
+	
+	private static final char NOT_A_MOVE = ' ';
+	
+	private static final int SLEEP_ODDS = 3;
+	private static final int CHANGE_DIR_ODDS = 2;
+	
 	
 	private int gcounter;
 	private final char[] movg = {'a','s','s','s','s','a','a','a','a','a','a','s',
@@ -12,79 +21,89 @@ public class GuardDrunken extends Enemy {
 	
 	private boolean asleep = false;
 	private boolean reverse = false;
-	private int way = 1;
+	private int way = NORMAL;
 	private boolean changedDir = false;
 	
 	public GuardDrunken(int xpos, int ypos)
 	{
-		super(xpos,ypos,'G');
+		super(xpos,ypos,Game.GUARD);
 	}
 	
-	public int randomInt (Random rng, int max) {
+	private int randomInt (Random rng, int max) 
+	{
 		int r = rng.nextInt(max);
 		return r;
 	}
 	
-	public boolean getAsleep() {
+	public boolean getAsleep() 
+	{
 		return asleep;
 	}
 	
-	public boolean isAsleep() {	
-		
-		boolean oldState;
-		
-		if (asleep == true) 
-			oldState = true;
-		else 
-			oldState = false;
-		
+	private void decideSleep()
+	{
 		Random rng = new Random();
 		
-		if (randomInt(rng, 3) == 0) {
+		if (randomInt(rng, SLEEP_ODDS) == 0) 
+		{
 			asleep = true;
-			setCaracter('g');
-		} else {
+			setCaracter(Game.SLEEPING);
+		} 
+		else 
+		{
 			asleep = false;
-			setCaracter('G');
+			setCaracter(Game.GUARD);
 		}
+	}
+	
+	public boolean isAsleep() 
+	{	
+		boolean oldState = asleep;
+		
+		decideSleep();
 		
 		return (oldState == true && asleep == false);
 	}
 	
-	public void reverseMov() {
-		if (reverse) {
+	private void reverseMov() 
+	{
+		if (reverse) 
+		{
 			reverse = false;
-			way = 1;
+			way = NORMAL;
 		}
-		else {
+		else 
+		{
 			reverse = true;
-			way = -1;
-		}
-		
-		
+			way = REVERSE;
+		}	
 	}
 	
-	public char getMove()
+	
+	private void changeDir()
 	{
-		
-		char ch = ' ';
-		
-		changedDir = isAsleep();
-		
 		Random rng = new Random();
 		
-		if (changedDir) {
-			if (randomInt(rng, 2) == 0) {
+		if (changedDir) 
+			if (randomInt(rng, CHANGE_DIR_ODDS) == 0) 
+			{
 				reverseMov();
 				changedDir = false;
 			}
-		}
+	}
+	
+	private char decideMove()
+	{
+		char ch = NOT_A_MOVE;
 		
-		if (!asleep) {
+		if (!asleep) 
+		{
 			if (gcounter<0)
 				gcounter += movg.length;
+			
 			if (!reverse)
 				ch = movg[gcounter%movg.length];
+			
 			else
 				ch = movgreverse[gcounter%movg.length];
 		}
@@ -92,11 +111,18 @@ public class GuardDrunken extends Enemy {
 		return ch;
 	}
 	
-	public void advanceGuard()
-	{
+	public char getMove()
+	{			
+		changedDir = isAsleep();
 		
-		if (!asleep) {	
+		changeDir();
+		
+		return decideMove();
+	}
+	
+	public void advanceGuard()
+	{	
+		if (!asleep)	
 			gcounter += way;
-		}
 	}
 }

@@ -2,29 +2,33 @@ package dkeep.logic;
 
 public class Ogre extends Enemy
 {
+	private static final int STUNNED_TURNS = 3;
 	
 	private int sc; 
 	
 	public Ogre(int xpos, int ypos)
 	{
-		super(xpos,ypos,'0');
-		sc = 3;
+		super(xpos,ypos,Game.OGRE);
+		sc = STUNNED_TURNS;
 	}
 	
-	public void gotHit() {
+	public void gotHit() 
+	{
 		sc = 0;
-		setCaracter('8');
+		setCaracter(Game.STUNNED_OGRE);
 	}
 	
-	public boolean isStun() {
+	public boolean isStun() 
+	{
 		sc++;
-		if (sc < 3) {
+		
+		if (sc < STUNNED_TURNS) 
 			return true;
-		} else if (sc == 3) {
-			setCaracter('0');
-			return false;
-		} else 
-			return false;		
+		
+		else if (sc == STUNNED_TURNS) 
+			setCaracter(Game.OGRE);
+		
+		return false;		
 	}
 	
 }

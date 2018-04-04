@@ -4,6 +4,12 @@ import java.util.Random;
 
 public class GuardSuspicious extends Enemy
 {
+	private static final int NORMAL = 1;
+	private static final int REVERSE = -1;
+	
+	private static final char NOT_A_MOVE = ' ';
+	
+	private static final int CHANGE_DIR_ODDS = 3;
 	
 	private int gcounter;
 	private final char[] movg = {'a','s','s','s','s','a','a','a','a','a','a','s',
@@ -12,39 +18,43 @@ public class GuardSuspicious extends Enemy
 			'a','a','a','a','a','a','a','s','s','s','s','s'};
 	
 	private boolean reverse = false;
-	private int way = 1;
+	private int way = NORMAL;
 	
 	public GuardSuspicious(int xpos, int ypos)
 	{
-		super(xpos,ypos,'G');
+		super(xpos,ypos,Game.GUARD);
 	}
 	
-	public int randomInt (Random rng, int max) {
+	private int randomInt (Random rng, int max) 
+	{
 		int r = rng.nextInt(max);
 		return r;
 	}
 	
-	public void reverseMov() {
-		if (reverse) {
+	private void reverseMov() 
+	{
+		if (reverse) 
+		{
 			reverse = false;
-			way = 1;
+			way = NORMAL;
 		}
-		else {
+		else 
+		{
 			reverse = true;
-			way = -1;
+			way = REVERSE;
 		}
-		
-		
 	}
 	
 	public char getMove()
 	{
-		char ch = ' ';
+		char ch = NOT_A_MOVE;
 		
 		if (gcounter<0)
 			gcounter += movg.length;
+		
 		if (!reverse)
 			ch = movg[gcounter%movg.length];
+		
 		else
 			ch = movgreverse[gcounter%movg.length];
 	
@@ -55,7 +65,7 @@ public class GuardSuspicious extends Enemy
 	{
 		Random rng = new Random();
 		
-		if (randomInt(rng, 3) == 0) // 33% probabilidade voltar para tras
+		if (randomInt(rng, CHANGE_DIR_ODDS) == 0)
 			reverseMov();
 		else
 			gcounter += way;

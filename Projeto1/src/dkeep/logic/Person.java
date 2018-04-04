@@ -4,11 +4,16 @@ import java.util.Arrays;
 
 public abstract class Person 
 {
+	private static final int VALID_MOVE = -1;
+	private static final int INVALID_MOVE = 0;
+	private static final int QUIT = 1;
+	
 	private int[] pos;
 	private int[] speed;
 	private char caracter;
 	
-	public Person(int xpos, int ypos, char ch) {
+	public Person(int xpos, int ypos, char ch) 
+	{
 		pos = new int[2];
 		speed = new int[2];
 		
@@ -40,12 +45,12 @@ public abstract class Person
 		case ' ': speed[0] = 0; speed[1] = 0; break;
 
 		case 'q':
-		case 'Q': return 1;
+		case 'Q': return QUIT;
 
-		default: return 0;
+		default: return INVALID_MOVE;
 		}
 
-		return -1;
+		return VALID_MOVE;
 	}
 	
 	public int[] getPosition()

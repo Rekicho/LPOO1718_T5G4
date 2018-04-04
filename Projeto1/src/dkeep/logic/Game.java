@@ -8,36 +8,42 @@ public class Game
 {
 	private static final char ARMED_HERO = 'A';
 	private static final char HERO_WITH_KEY = 'K';
-	private static final char OGRE = '0';
-	private static final char STUNNED_OGRE = '8';
-	private static final char STAIR = 'S';
-	private static final char DOOR = 'I';
-	private static final char WALL = 'X';
-	private static final char KEY = 'k';
 	private static final char HIDDEN_KEY = '$';
-	private static final char OGRE_CLUB = '*';
-	private static final char NOTHING = ' ';
+	
+	public static final char HERO = 'H';
+	public static final char GUARD = 'G';
+	public static final char SLEEPING = 'g';
+	public static final char OGRE = '0';
+	public static final char STUNNED_OGRE = '8';
+	public static final char OGRE_CLUB = '*';
+	public static final char WALL = 'X';
+	public static final char NOTHING = ' ';
+	public static final char DOOR = 'I';
+	public static final char STAIR = 'S';
+	public static final char KEY = 'k';
 	
 	public static final char ROOKIE = '1';
 	public static final char DRUNKEN = '2';
 	public static final char SUSPICIOUS = '3';
 	
-	public static final int GUARD_X = 8;
-	public static final int GUARD_Y = 1;
+	private static final int GUARD_X = 8;
+	private static final int GUARD_Y = 1;
 	
-	public static final int HERO_L1_X = 1;
-	public static final int HERO_L1_Y = 1;
+	private static final int HERO_L1_X = 1;
+	private static final int HERO_L1_Y = 1;
 	
-	public static final int HERO_L2_X = 1;
-	public static final int HERO_L2_Y = 7;
+	private static final int HERO_L2_X = 1;
+	private static final int HERO_L2_Y = 7;
 	
-	public static final int OGRE_X = 4;
-	public static final int OGRE_Y = 1;
+	private static final int OGRE_X = 4;
+	private static final int OGRE_Y = 1;
 	
-	public static final int DEFAULT_MAX_OGRE_NUM = 3;
+	private static final int DEFAULT_MAX_OGRE_NUM = 3;
+	public static final int MAX_OGRE = 5;
 	
-	public static final int INVALID_RETURN = 42;
-	public static final int VALID_MOVEMENT = -1;
+	private static final int INVALID_RETURN = 42;
+	private static final int VALID_MOVEMENT = -1;
+	
 	public static final int PLAYING = 0;
 	public static final int GAMEOVER = 1;
 	public static final int WIN = 2;
@@ -358,22 +364,6 @@ public class Game
 		else en.setSpeed(mov,0);	
 	}
 	
-	private void checkOgreOverlap(Enemy og, int[] pos, int ref, Boolean unique, Boolean anyStun, Boolean anyActive)
-	{
-		for(int i = 0; i < enemies.size(); i++)
-		{
-			if(i != ref && Arrays.equals(pos, enemies.get(i).getPosition()))
-			{
-				unique = false;
-
-				if(og.getCaracter() == STUNNED_OGRE)
-					anyStun = true;
-
-				else anyActive = true;
-			}
-		}
-	}
-	
 	private void placeOnOgreLastPos(int[] pos, boolean unique, boolean anyStun, boolean anyActive)
 	{
 		if (map.position(pos[0], pos[1]) == HIDDEN_KEY)
@@ -407,11 +397,22 @@ public class Game
 		int[] pos = og.getPosition();
 		int[] speed = og.getSpeed();
 
-		Boolean unique = true;
-		Boolean anyStun = false;
-		Boolean anyActive = false;
+		boolean unique = true;
+		boolean anyStun = false;
+		boolean anyActive = false;
 
-		checkOgreOverlap(og, pos, ref, unique, anyStun, anyActive);
+		for(int i = 0; i < enemies.size(); i++)
+		{
+			if(i != ref && Arrays.equals(pos, enemies.get(i).getPosition()))
+			{
+				unique = false;
+
+				if(og.getCaracter() == STUNNED_OGRE)
+					anyStun = true;
+
+				else anyActive = true;
+			}
+		}
 		
 		placeOnOgreLastPos(pos, unique, anyStun, anyActive);
 		

@@ -4,37 +4,44 @@ public class Map
 {
 	private char[][] map;
 	
+	private void setLevel1Map()
+	{
+		char[][] level1 = { {'X','X','X','X','X','X','X','X','X','X'},
+				{'X','H',' ',' ','I',' ','X',' ','G','X'},
+				{'X','X','X',' ','X','X','X',' ',' ','X'},
+				{'X',' ','I',' ','I',' ','X',' ',' ','X'},
+				{'X','X','X',' ','X','X','X',' ',' ','X'},
+				{'I',' ',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'I',' ',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X','X','X',' ','X','X','X','X',' ','X'},
+				{'X',' ','I',' ','I',' ','X','k',' ','X'},
+				{'X','X','X','X','X','X','X','X','X','X'} };
+		
+		map = level1;
+	}
+	
+	private void setLevel2Map()
+	{
+		char[][] level2 = { {'X','X','X','X','X','X','X','X','X'},
+				{'I',' ',' ',' ','0',' ',' ','k','X'},
+				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X',' ',' ',' ',' ',' ',' ',' ','X'},
+				{'X','H',' ',' ',' ',' ',' ',' ','X'},
+				{'X','X','X','X','X','X','X','X','X'} };
+
+		map = level2;
+	}
+	
 	public Map(int level)
 	{
 		if (level == 1)
-		{
-			char[][] level1 = { {'X','X','X','X','X','X','X','X','X','X'},
-								{'X','H',' ',' ','I',' ','X',' ','G','X'},
-								{'X','X','X',' ','X','X','X',' ',' ','X'},
-								{'X',' ','I',' ','I',' ','X',' ',' ','X'},
-								{'X','X','X',' ','X','X','X',' ',' ','X'},
-								{'I',' ',' ',' ',' ',' ',' ',' ',' ','X'},
-								{'I',' ',' ',' ',' ',' ',' ',' ',' ','X'},
-								{'X','X','X',' ','X','X','X','X',' ','X'},
-								{'X',' ','I',' ','I',' ','X','k',' ','X'},
-								{'X','X','X','X','X','X','X','X','X','X'} };
-			map = level1;
-		}
+			setLevel1Map();
 		
 		if (level == 2)
-		{
-			char[][] level2 = { {'X','X','X','X','X','X','X','X','X'},
-								{'I',' ',' ',' ','0',' ',' ','k','X'},
-								{'X',' ',' ',' ',' ',' ',' ',' ','X'},
-								{'X',' ',' ',' ',' ',' ',' ',' ','X'},
-								{'X',' ',' ',' ',' ',' ',' ',' ','X'},
-								{'X',' ',' ',' ',' ',' ',' ',' ','X'},
-								{'X',' ',' ',' ',' ',' ',' ',' ','X'},
-								{'X','H',' ',' ',' ',' ',' ',' ','X'},
-								{'X','X','X','X','X','X','X','X','X'} };
-			
-			map = level2;
-		}
+			setLevel2Map();
 	}
 	
 	public Map(char[][] map)
@@ -42,17 +49,18 @@ public class Map
 		this.map = map;
 	}
 	
-	public void resize(int x, int y) {
+	public void resize(int x, int y) 
+	{
 		map = new char[y][x];
 		
-		for(int j = 0; j < y; j++) {
-			for (int i = 0; i < x; i++) {
+		for(int j = 0; j < y; j++) 
+			for (int i = 0; i < x; i++) 
+			{
 				if(j == 0 || j == y - 1 || i == 0 || i == x - 1)
-					map[j][i] = 'X';
+					map[j][i] = Game.WALL;
 				
-				else map[j][i] = ' ';
+				else map[j][i] = Game.NOTHING;
 			}
-		}
 	}
 	
 	public String toString()
@@ -61,10 +69,10 @@ public class Map
 		
 		for(int i = 0; i < map.length; i++)
 		{
-			for(int j = 0; j < map[i].length; j++) {
-			temp += " " + map[i][j] + " ";
-			}
-		temp += "\n";
+			for(int j = 0; j < map[i].length; j++) 
+				temp += " " + map[i][j] + " ";
+		
+			temp += "\n";
 		}
 		
 		return temp;
@@ -78,8 +86,8 @@ public class Map
 	public void openDoors()
 	{
 		for(int i = 0; i < map.length; i++)
-			if(map[i][0] == 'I')
-				map[i][0] = 'S';
+			if(map[i][0] == Game.DOOR)
+				map[i][0] = Game.STAIR;
 	}
 	
 	public void setPosition(int x, int y, char ch)
@@ -98,38 +106,36 @@ public class Map
 	}
 	
 	public boolean checkValid()
-	{
+	{		
 		int hero = 0;
 		int ogre = 0;
 		boolean exitDoor = false;
 		boolean key = false;
 		
 		for(int j = 0; j < map.length; j++)
-		{
 			for(int i = 0; i < map[j].length; i++) 
 			{
-				if(map[j][i] == 'H')
+				if(map[j][i] == Game.HERO)
 					hero++;
 				
-				else if(map[j][i] == '0')
+				else if(map[j][i] == Game.OGRE)
 					ogre++;
 				
-				else if(map[j][i] == 'I')
+				else if(map[j][i] == Game.DOOR)
 					exitDoor = true;
 				
-				else if(map[j][i] == 'k')
+				else if(map[j][i] == Game.KEY)
 					key = true;
 			}
-		}
 		
-		return (hero == 1) && (ogre > 0 || ogre <= 5) && exitDoor && key;
+		return (hero == 1) && (ogre > 0 || ogre <= Game.MAX_OGRE) && exitDoor && key;
 	}
 
 	public int[] findHero() 
 	{
 		for(int j = 0; j < map.length; j++)
 			for(int i = 0; i < map[j].length; i++) 
-				if(map[j][i] == 'H')
+				if(map[j][i] == Game.HERO)
 				{
 					int[] heropos = {i, j};
 					return heropos;
@@ -144,7 +150,7 @@ public class Map
 		
 		for(int j = 0; j < map.length; j++)
 			for(int i = 0; i < map[j].length; i++) 
-				if(map[j][i] == '0')
+				if(map[j][i] == Game.OGRE)
 					ogreNum++;
 		
 		return ogreNum;
@@ -171,7 +177,7 @@ public class Map
 		
 		for(int j = 0; j < map.length; j++)
 			for(int i = 0; i < map[j].length; i++) 
-				if(map[j][i] == '0')
+				if(map[j][i] == Game.OGRE)
 				{
 					ogrePos[ogre] = i;
 					ogrePos[ogre + 1] = j;
