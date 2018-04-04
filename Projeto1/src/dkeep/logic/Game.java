@@ -28,6 +28,12 @@ public class Game
 	public static final int HERO_L1_X = 1;
 	public static final int HERO_L1_Y = 1;
 	
+	public static final int HERO_L2_X = 1;
+	public static final int HERO_L2_Y = 7;
+	
+	public static final int OGRE_X = 4;
+	public static final int OGRE_Y = 1;
+	
 	public static final int DEFAULT_MAX_OGRE_NUM = 3;
 	
 	public static final int VALID_MOVEMENT = -1;
@@ -328,17 +334,9 @@ public class Game
 
 		else en.setSpeed(mov,0);	
 	}
-
-	//TODO: Refactor
-	public void moveOgre(Enemy og, int ref) 
+	
+	private void checkOgreOverlap(Enemy og, int[] pos, int ref, Boolean unique, Boolean anyStun, Boolean anyActive)
 	{
-		int[] pos = og.getPosition();
-		int[] speed = og.getSpeed();
-
-		boolean unique = true;
-		boolean anyStun = false;
-		boolean anyActive = false;
-
 		for(int i = 0; i < enemies.size(); i++)
 		{
 			if(i != ref && Arrays.equals(pos, enemies.get(i).getPosition()))
@@ -351,7 +349,10 @@ public class Game
 				else anyActive = true;
 			}
 		}
-
+	}
+	
+	private void placeOnOgreLastPos(int[] pos, boolean unique, boolean anyStun, boolean anyActive)
+	{
 		if (map.position(pos[0], pos[1]) == HIDDEN_KEY)
 		{
 			if(unique)
@@ -365,19 +366,33 @@ public class Game
 		}	
 
 		else map.setPosition(pos[0], pos[1], NOTHING);
-
-
-
+	}
+	
+	private void placeOnOgreNextPos(Enemy og, int[] pos, int[] speed)
+	{
 		if(map.position(pos[0]+ speed[0], pos[1] + speed[1]) == HIDDEN_KEY)
-		{
-			og.updatePos();
 			return;
-		}
 
 		if(map.position(pos[0]+ speed[0], pos[1] + speed[1]) == KEY)
 			map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], HIDDEN_KEY);
 
 		else map.setPosition(pos[0]+ speed[0], pos[1] + speed[1], OGRE);
+	}
+
+	private void moveOgre(Enemy og, int ref) 
+	{
+		int[] pos = og.getPosition();
+		int[] speed = og.getSpeed();
+
+		Boolean unique = true;
+		Boolean anyStun = false;
+		Boolean anyActive = false;
+
+		checkOgreOverlap(og, pos, ref, unique, anyStun, anyActive);
+		
+		placeOnOgreLastPos(pos, unique, anyStun, anyActive);
+		
+		placeOnOgreNextPos(og, pos, speed);
 
 		og.updatePos();
 	}
@@ -446,44 +461,38 @@ public class Game
 				esquerda == ARMED_HERO || direita == ARMED_HERO || cima == ARMED_HERO || baixo == ARMED_HERO);
 	}
 
-	//TODO: Refactor
-	public void setupLevel2()
+	private void setupOgresandClubs()
 	{
-		club = false;
-		map = new Map(level);
-		player = new Hero(1,7);
-
-		player.setCaracter(ARMED_HERO);
-		map.setPosition(1, 7, ARMED_HERO);
-
 		enemies = new ArrayList<Enemy>(ogreNumber);
 		ogreClubs = new ArrayList<Weapon>(ogreNumber);
 
 		for(int i = 0; i < ogreNumber; i++)
 		{
-			Enemy enemy = new Ogre(4,1);
+			Enemy enemy = new Ogre(OGRE_X,OGRE_Y);
 			enemies.add(enemy);
 		}
 
 		for(int i = 0; i < ogreNumber; i++)
 		{
-			Weapon weapon = new Weapon(4,1);
+			Weapon weapon = new Weapon(OGRE_X,OGRE_Y);
 			ogreClubs.add(weapon);
 		}
 	}
-	
-	//TODO: Refactor
-	public void setupEditedKeep()
+
+	public void setupLevel2()
 	{
 		club = false;
-		map = newKeep;
-		
-		int[] playerPos = map.findHero();
-		player = new Hero(playerPos[0],playerPos[1]);
+		map = new Map(level);
+		player = new Hero(HERO_L2_X,HERO_L2_Y);
 
 		player.setCaracter(ARMED_HERO);
-		map.setPosition(playerPos[0], playerPos[1], ARMED_HERO);
+		map.setPosition(HERO_L2_X, HERO_L2_Y, ARMED_HERO);
 		
+		setupOgresandClubs();
+	}
+	
+	private void setupEditedOgresandClubs() 
+	{
 		ogreNumber = map.countOgres();
 
 		enemies = new ArrayList<Enemy>(ogreNumber);
@@ -502,6 +511,20 @@ public class Game
 			Weapon weapon = new Weapon(ogresPos[i],ogresPos[i+1]);
 			ogreClubs.add(weapon);
 		}
+	}
+	
+	private void setupEditedKeep()
+	{
+		club = false;
+		map = newKeep;
+		
+		int[] playerPos = map.findHero();
+		player = new Hero(playerPos[0],playerPos[1]);
+
+		player.setCaracter(ARMED_HERO);
+		map.setPosition(playerPos[0], playerPos[1], ARMED_HERO);
+		
+		setupEditedOgresandClubs();
 	}
 
 	//TODO: Refactor
@@ -640,26 +663,28 @@ public class Game
 		club = true;
 		return flag;
 	}
+	
+	private int playandCheckNextLevel(char ch)
+	{
+		int proximo = level1(ch);
 
-	//TODO: Refactor
+		if (proximo == WIN)
+		{
+			level = 2;
+			if(newKeep == null)
+				setupLevel2();
+			
+			else setupEditedKeep();
+			proximo = PLAYING;
+		}
+
+		return proximo;
+	}
+
 	public int gameLogic(char ch)
 	{
 		if (level == 1)
-		{
-			int proximo = level1(ch);
-
-			if (proximo == 2)
-			{
-				level = 2;
-				if(newKeep == null)
-					setupLevel2();
-				
-				else setupEditedKeep();
-				proximo = 0;
-			}
-
-			return proximo;
-		}
+			return playandCheckNextLevel(ch);
 
 		if (level == 2)
 			return level2(ch, true);
