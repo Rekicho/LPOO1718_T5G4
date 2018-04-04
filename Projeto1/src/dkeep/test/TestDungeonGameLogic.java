@@ -27,26 +27,6 @@ public class TestDungeonGameLogic {
 	int[] enemyPos = {3,1};
 	
 	@Test
-	public void test()  {
-		Game game1 = new Game(1,map1,heroPos,enemyPos);
-		assertEquals(game1.getEnemies().size(), 1);
-		Game game3 = new Game(1,map1,heroPos,enemyPos);
-		game3.selectDifficulty('1');
-		Game game4 = new Game(1,map1,heroPos,enemyPos);
-		game4.selectDifficulty('2');
-		Game game5 = new Game(1,map1,heroPos,enemyPos);
-		game5.selectDifficulty('3');
-		Game game6 = new Game(1,map1,heroPos,enemyPos);
-		game6.selectDifficulty('4');
-		Game game7 = new Game();
-		game7.setupLevel2();
-		game7.level2('H', false);
-		Game game2 = new Game();
-		game2.setupLevel2();
-		game2.level2('H', true);
-	}
-	
-	@Test
 	public void testMoveHeroIntoToFreeCell() 
 	{
 		Game game = new Game(1,map1,heroPos,enemyPos);
@@ -81,12 +61,12 @@ public class TestDungeonGameLogic {
 		Hero hero = game.getHero();
 		assertTrue(Arrays.equals(heroPos, hero.getPosition()));
 		hero.updateSpeed('a');
-//		if (game.checkValidMove(hero))
-//			game.move(hero);
+		if (game.checkValidMove(hero))
+			game.move(hero);
 		assertTrue(Arrays.equals(heroPos, hero.getPosition()));
 		hero.updateSpeed('w');
-//		if (game.checkValidMove(hero))
-//			game.move(hero);
+		if (game.checkValidMove(hero))
+			game.move(hero);
 		assertTrue(Arrays.equals(heroPos, hero.getPosition()));
 	}
 	
@@ -112,8 +92,8 @@ public class TestDungeonGameLogic {
 			game.move(hero);
 		
 		hero.updateSpeed('a');
-//		if (game.checkValidMove(hero))
-//			game.move(hero);
+		if (game.checkValidMove(hero))
+			game.move(hero);
 		
 		heroPos[1] = 2;
 		assertTrue(Arrays.equals(heroPos, hero.getPosition()));
@@ -143,32 +123,5 @@ public class TestDungeonGameLogic {
 		assertEquals(2,game.level1('a'));
 		assertEquals('G',game.getPos(2,3));
 	}
-	
-	@Test
-	public void testStunOgre() 
-	{
-		Game game = new Game(2,map2,heroPos,enemyPos);
-		game.level2('d',false);
-		assertEquals('8', game.getEnemyChar(0));
-	}
-	
-	@Test
-	public void testPickupKey() 
-	{
-		Game game = new Game(2,map2,heroPos,enemyPos);
-		game.level2('s',false);
-		game.level2('s',false);
-		assertEquals('K', game.getPlayerChar());
-	}
-	
-	@Test
-	public void testLockedDoors() 
-	{
-		Game game = new Game(2,map2,heroPos,enemyPos);
-		game.level2('s',false);
-		game.level2('a',false);
-		assertEquals('I', game.getPos(0, 2));
-	}
-
 }
 

@@ -91,6 +91,10 @@ public class Game
 		return player.getCaracter();
 	}
 
+	public ArrayList<Weapon> getWeapons() {
+		return ogreClubs;
+	}
+	
 	public Game()
 	{
 		Random rng = new Random();
@@ -106,6 +110,16 @@ public class Game
 		level = 1;
 		setupLevel1();
 		selectDifficulty(dif);
+	}
+	
+	public Game(int on, int l)
+	{
+		ogreNumber = on;
+		level = l;
+		if (level == 1)
+			setupLevel1();
+		else
+			setupLevel2();
 	}
 	
 	private void customLevel1Game(char[][] map, int[] heroPos, int[] enemyPos)
@@ -127,8 +141,7 @@ public class Game
 		player.setCaracter(ARMED_HERO);
 		this.map.setPosition(heroPos[0],heroPos[1],ARMED_HERO);
 		enemies = new ArrayList<Enemy>(1);
-		Enemy enemy = new Ogre(enemyPos[0],enemyPos[1]);
-		enemies.add(enemy);
+		enemies.add(new Ogre(enemyPos[0],enemyPos[1]));
 	}
 	
 	public Game(int level, char[][] map, int[] heroPos, int[] enemyPos)
@@ -562,7 +575,7 @@ public class Game
 				move(player);
 			}
 
-			for (int i = 0; i < enemies.size(); i++) 
+			for (int i = 0; ogreNeedsMove && i < enemies.size(); i++) 
 			{
 				Enemy ogre = enemies.get(i);
 				Weapon ogreClub = ogreClubs.get(i);
@@ -578,7 +591,7 @@ public class Game
 					clearClub(ogreClub);
 			}
 
-			for (int i = 0; ogreNeedsMove && i < enemies.size(); i++) 
+			for (int i = 0; i < enemies.size(); i++) 
 			{
 				Enemy ogre = enemies.get(i);
 
@@ -590,7 +603,7 @@ public class Game
 					map.setPosition(pos[0], pos[1], STUNNED_OGRE);
 				}
 
-				if(!ogre.isStun()) {
+				if(!ogre.isStun() && ogreNeedsMove) {
 					boolean randomFlag = checkOgrePossibleMov(ogre);
 					
 					while (randomFlag) 

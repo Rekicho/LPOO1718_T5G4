@@ -42,5 +42,25 @@ public class TestKeepGameLogic {
 		game.level2('a',false);
 		assertEquals('I', game.getPos(0, 2));
 	}
+	
+	@Test
+	public void testOpenDoor() 
+	{
+		Game game = new Game(2,map2,heroPos,enemyPos);
+		game.level2('s',false);
+		game.level2('s',false);
+		game.level2('a',false);
+		assertEquals('S', game.getPos(0, 3));
+	}
+	
+	@Test
+	public void testWin() 
+	{
+		Game game = new Game(2,map2,heroPos,enemyPos);
+		game.level2('s',false);
+		game.level2('s',false);
+		game.level2('a',false);
+		assertEquals(2, game.level2('a', false));
+	}
 
 }
