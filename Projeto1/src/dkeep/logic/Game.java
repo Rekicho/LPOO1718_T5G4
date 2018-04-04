@@ -36,6 +36,7 @@ public class Game
 	
 	public static final int DEFAULT_MAX_OGRE_NUM = 3;
 	
+	public static final int INVALID_RETURN = 42;
 	public static final int VALID_MOVEMENT = -1;
 	public static final int PLAYING = 0;
 	public static final int GAMEOVER = 1;
@@ -272,18 +273,27 @@ public class Game
 		return flag;
 	}
 	
-	public int level1(char ch) 
+	private int readMove(char ch)
 	{
-		Enemy enemy = enemies.get(0);
 		flag = player.updateSpeed(ch);
-
+		
 		if(flag != VALID_MOVEMENT)
-			return flag;
+			return INVALID_RETURN;
 
 		flag = PLAYING;
 
 		if(checkWin())
 			flag = WIN;
+		
+		return flag;		
+	}
+	
+	public int level1(char ch) 
+	{
+		Enemy enemy = enemies.get(0);
+		
+		if(readMove(ch) == INVALID_RETURN)
+			return flag;
 
 		enemy.updateSpeed(enemy.getMove());
 		
@@ -540,137 +550,172 @@ public class Game
 		setupEditedOgresandClubs();
 	}
 
+	private boolean wasteMove()
+	{
+		if (movingToDoor() && player.getCaracter() == HERO_WITH_KEY) 
+		{
+			openDoor();
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private void level2PlayerMovement(boolean waste)
+	{
+		if(!waste)
+		{
+			if(pickupKey())
+				player.setCaracter(HERO_WITH_KEY);
+
+			move(player);
+		}
+	}
+	
+	private int checkGameoverAndClearClubs(boolean ogreNeedsMove)
+	{
+		for (int i = 0; ogreNeedsMove && i < enemies.size(); i++) 
+		{
+			Enemy ogre = enemies.get(i);
+			Weapon ogreClub = ogreClubs.get(i);
+
+			if (flag != 2 && (club && !Arrays.equals(ogre.getPosition(), ogreClub.getPosition()) && checkGameOver(ogreClub)))
+			{
+				flag = 1;
+				return INVALID_RETURN;
+			}
+
+			if(club && !Arrays.equals(ogre.getPosition(), ogreClub.getPosition()))
+				clearClub(ogreClub);
+		}
+		
+		return flag;
+	}
+	
+	private void handleStun(Enemy ogre)
+	{
+		if(checkStun(ogre)) 
+		{
+			int[] pos = ogre.getPosition();
+			ogre.gotHit();
+			if(map.position(pos[0], pos[1]) != HIDDEN_KEY)
+				map.setPosition(pos[0], pos[1], STUNNED_OGRE);
+		}
+	}
+	
+	private int randomOgreMovement(Random rng, Enemy ogre, int i)
+	{
+		boolean randomFlag = checkOgrePossibleMov(ogre);
+		
+		while (randomFlag) 
+		{
+			setRandMov(rng,ogre);
+
+			if (checkValidMove(ogre))
+			{
+				randomFlag = false;
+
+				if(checkOverlap(ogre))
+				{
+					flag = 1;
+					return INVALID_RETURN;
+				}
+
+				moveOgre(ogre, i);
+
+				handleStun(ogre);
+			}	
+		}
+		
+		return flag;
+	}
+	
+	private int level2OgreMovement(Random rng, boolean ogreNeedsMove)
+	{
+		for (int i = 0; i < enemies.size(); i++) 
+		{
+			Enemy ogre = enemies.get(i);
+			
+			handleStun(ogre);
+
+			if(!ogre.isStun() && ogreNeedsMove) 
+				if(randomOgreMovement(rng, ogre, i) == INVALID_RETURN)
+					return INVALID_RETURN;
+		}
+		
+		return flag;
+	}
+	
+	private int randomClubMovement(Random rng, Weapon ogreClub, boolean randomFlag)
+	{
+		while (randomFlag) 
+		{
+			setRandMov(rng,ogreClub);
+
+			if (checkClubValidMove(ogreClub)) 
+			{
+				randomFlag = false;
+
+				if(checkOverlap(ogreClub))
+				{
+					flag = 1;
+					return INVALID_RETURN;
+				}
+
+				moveOgreClub(ogreClub);
+			}	
+		}
+		
+		return flag;
+	}
+	
+	private int level2ClubMovement(Random rng, boolean ogreNeedsMove)
+	{
+		for (int i = 0; ogreNeedsMove && i < enemies.size(); i++) 
+		{
+			Enemy ogre = enemies.get(i);
+			Weapon ogreClub = ogreClubs.get(i);
+
+			ogreClub.setPosition(ogre.getPosition());
+			boolean randomFlag = checkClubPossibleMov(ogreClub);
+
+			if(!randomFlag)
+				ogreClub.setSpeed(0, 0);
+			
+			if(randomClubMovement(rng, ogreClub, randomFlag) == INVALID_RETURN)
+				return INVALID_RETURN;
+
+			if (flag != 2 && checkGameOver(ogreClub) && !Arrays.equals(ogre.getPosition(),ogreClub.getPosition()))
+			{
+				flag = 1;
+				return INVALID_RETURN;
+			}
+		}
+		
+		return flag;
+	}
+	
 	//TODO: Refactor
 	public int level2(char ch, boolean ogreNeedsMove) 
 	{
 		Random rng = new Random();
 
-		flag = player.updateSpeed(ch);
-
-		if(flag != -1)
+		if(readMove(ch) == INVALID_RETURN)
 			return flag;
 
-		flag = 0;
-
-		if(checkWin())
-			flag = 2;
-
-		boolean waste = false;
-
-		if (movingToDoor() && player.getCaracter() == HERO_WITH_KEY) 
-		{
-			waste = true;
-			openDoor();
-		}
-
+		boolean waste = wasteMove();
+		
 		if (checkValidMove(player))
 		{
+			level2PlayerMovement(waste);
+			
+			if(checkGameoverAndClearClubs(ogreNeedsMove) == INVALID_RETURN)
+				return flag;
 
-			//Player Movement
-			if(!waste)
-			{
-				if(pickupKey())
-					player.setCaracter(HERO_WITH_KEY);
-
-				move(player);
-			}
-
-			for (int i = 0; ogreNeedsMove && i < enemies.size(); i++) 
-			{
-				Enemy ogre = enemies.get(i);
-				Weapon ogreClub = ogreClubs.get(i);
-
-				if (flag != 2 && (club && !Arrays.equals(ogre.getPosition(), ogreClub.getPosition()) && checkGameOver(ogreClub)))
-				{
-					flag = 1;
-					return flag;
-				}
-
-				//Check ogre and club overpos
-				if(club && !Arrays.equals(ogre.getPosition(), ogreClub.getPosition()))
-					clearClub(ogreClub);
-			}
-
-			for (int i = 0; i < enemies.size(); i++) 
-			{
-				Enemy ogre = enemies.get(i);
-
-				//Ogre movement
-
-				if(checkStun(ogre)) {
-					int[] pos = ogre.getPosition();
-					ogre.gotHit();
-					map.setPosition(pos[0], pos[1], STUNNED_OGRE);
-				}
-
-				if(!ogre.isStun() && ogreNeedsMove) {
-					boolean randomFlag = checkOgrePossibleMov(ogre);
-					
-					while (randomFlag) 
-					{
-						setRandMov(rng,ogre);
-
-						if (checkValidMove(ogre))
-						{
-							randomFlag = false;
-
-							if(checkOverlap(ogre))
-							{
-								flag = 1;
-								return flag;
-							}
-
-							moveOgre(ogre, i);
-
-							if(checkStun(ogre)) {
-								int[] pos = ogre.getPosition();
-								ogre.gotHit();
-								if(map.position(pos[0], pos[1]) != HIDDEN_KEY)
-									map.setPosition(pos[0], pos[1], STUNNED_OGRE);
-							}
-						}	
-					}
-				}
-			}
-
-			for (int i = 0; ogreNeedsMove && i < enemies.size(); i++) 
-			{
-				Enemy ogre = enemies.get(i);
-				Weapon ogreClub = ogreClubs.get(i);
-
-				ogreClub.setPosition(ogre.getPosition());
-				boolean randomFlag = checkClubPossibleMov(ogreClub);
-
-				if(!randomFlag)
-					ogreClub.setSpeed(0, 0);
-
-				//Ogre Club movement
-				while (randomFlag) 
-				{
-					setRandMov(rng,ogreClub);
-
-					if (checkClubValidMove(ogreClub)) 
-					{
-						randomFlag = false;
-
-						if(checkOverlap(ogreClub))
-						{
-							flag = 1;
-							return flag;
-						}
-
-						moveOgreClub(ogreClub);
-					}	
-				}
-
-				if (flag != 2 && checkGameOver(ogreClub) && !Arrays.equals(ogre.getPosition(),ogreClub.getPosition()))
-				{
-					flag = 1;
-					return flag;
-				}
-
-			}
-
+			if(level2OgreMovement(rng, ogreNeedsMove) == INVALID_RETURN)
+				return flag;
+			
+			level2ClubMovement(rng, ogreNeedsMove);
 		}
 
 		club = true;
