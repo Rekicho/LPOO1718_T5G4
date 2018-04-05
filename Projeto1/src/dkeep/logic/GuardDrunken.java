@@ -24,22 +24,39 @@ public class GuardDrunken extends Enemy
 	private int way = NORMAL;
 	private boolean changedDir = false;
 	
+	/**
+	* Drunken guard constructor. The drunken guard falls asleep randomly and when he wakes up he may start walking in the opposite direction.
+	* @param xpos Initial position on the x axis
+	* @param ypos Initial position on the y axis
+	*/
 	public GuardDrunken(int xpos, int ypos)
 	{
 		super(xpos,ypos,Game.GUARD);
 	}
 	
+	/**
+	* Function the generate a random number.
+	* @param rng Random object
+	* @param max Maximum value of the random number
+	* @return random integer smaller then the max argument
+	*/
 	private int randomInt (Random rng, int max) 
 	{
 		int r = rng.nextInt(max);
 		return r;
 	}
 	
+	/**
+	* @return Asleep attribute (to check if the guard is currently asleep)
+	*/
 	public boolean getAsleep() 
 	{
 		return asleep;
 	}
 	
+	/**
+	 * This function determines if the guard will fall asleep (or keep sleeping) or be awake.
+	 */
 	private void decideSleep()
 	{
 		Random rng = new Random();
@@ -56,6 +73,10 @@ public class GuardDrunken extends Enemy
 		}
 	}
 	
+	/**
+	* This function tells you if the guard just woke up.
+	* @return It returns true if the guard was asleep and now is awake or else it returns false otherwise
+	*/
 	public boolean isAsleep() 
 	{	
 		boolean oldState = asleep;
@@ -65,6 +86,9 @@ public class GuardDrunken extends Enemy
 		return (oldState == true && asleep == false);
 	}
 	
+	/**
+	* This function changes the guard's direction by changing the way attribute to its symmetric value 
+	*/
 	private void reverseMov() 
 	{
 		if (reverse) 
@@ -79,6 +103,9 @@ public class GuardDrunken extends Enemy
 		}	
 	}
 	
+	/**
+	 * It decides if the guard will change he's direction.
+	 */
 	
 	private void changeDir()
 	{
@@ -91,6 +118,11 @@ public class GuardDrunken extends Enemy
 				changedDir = false;
 			}
 	}
+	
+	/**
+	 * If the guard is awake, it fetches values from movg or movgreverse if he's moving in the opposite way.
+	 * @return 'a'-left, 'd'-right, 'w'-up, 's'-down or ' '-guard asleep and there's no movement
+	 */
 	
 	private char decideMove()
 	{
@@ -111,6 +143,10 @@ public class GuardDrunken extends Enemy
 		return ch;
 	}
 	
+	/**
+	* Function to determine next move.
+	* @return 'a'-left, 'd'-right, 'w'-up, 's'-down or ' '-guard asleep and there's no movement
+	*/
 	public char getMove()
 	{			
 		changedDir = isAsleep();
@@ -120,6 +156,9 @@ public class GuardDrunken extends Enemy
 		return decideMove();
 	}
 	
+	/**
+	* Function to make the counter which determines the next move to increment unless the guard is asleep.
+	*/
 	public void advanceGuard()
 	{	
 		if (!asleep)	

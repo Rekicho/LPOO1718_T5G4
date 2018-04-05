@@ -35,6 +35,10 @@ public class Map
 		map = level2;
 	}
 	
+	/**
+	* Default map constructor.
+	* @param level Determines which level's map will create
+	*/
 	public Map(int level)
 	{
 		if (level == 1)
@@ -44,6 +48,10 @@ public class Map
 			setLevel2Map();
 	}
 	
+	/**
+	* Personalized map constructor.
+	* @param map Char matrix that'll be used as a map
+	*/
 	public Map(char[][] map)
 	{
 		this.map = map;
@@ -63,6 +71,10 @@ public class Map
 			}
 	}
 	
+	/**
+	* This function is used to convert the map matrix to text so that it can be printed.
+	* @return string of the map
+	*/
 	public String toString()
 	{
 		String temp = "";
@@ -78,11 +90,20 @@ public class Map
 		return temp;
 	}
 	
+	/**
+	* This function lets you know what char is on the [x,y] position. 
+	* @param x Position on the x axis
+	* @param y Position on the y axis
+	* @return [x,y] postion's char
+	*/
 	public char position(int x, int y)
 	{
 		return map[y][x];
 	}
 	
+	/**
+	 * This function opens the doors of the dungeon's left wall.
+	 */
 	public void openDoors()
 	{
 		for(int i = 0; i < map.length; i++)
@@ -90,21 +111,38 @@ public class Map
 				map[i][0] = Game.STAIR;
 	}
 	
+	/**
+	 * It puts the char ch on the map[x,y] position.
+	 * @param x Position on the x axis
+	 * @param y Position on the y axis
+	 * @param ch char to set on the map
+	 */
 	public void setPosition(int x, int y, char ch)
 	{
 		map[y][x] = ch;
 	}
 	
+	/**
+	 * @return map's number of columns
+	 */
 	public int length()
 	{
 		return map.length;
 	}
 	
+	/**
+	 * @param y column number
+	 * @return column's number of rows 
+	 */
 	public int length(int y)
 	{
 		return map[y].length;
 	}
 	
+	/**
+	 * This function check if the next move is valid. This means that you can't walk the hero through a wall, for example. 
+	 * @return true if valid / false if invalid
+	 */
 	public boolean checkValid()
 	{		
 		int hero = 0;
@@ -131,6 +169,9 @@ public class Map
 		return (hero == 1) && (ogre > 0 || ogre <= Game.MAX_OGRE) && exitDoor && key;
 	}
 
+	/**
+	 * @return hero's position
+	 */
 	public int[] findHero() 
 	{
 		for(int j = 0; j < map.length; j++)
@@ -144,6 +185,9 @@ public class Map
 		return null;
 	}
 	
+	/**
+	 * @return number of ogres in the dungeon
+	 */
 	public int countOgres()
 	{
 		int ogreNum = 0;
@@ -156,6 +200,10 @@ public class Map
 		return ogreNum;
 	}
 	
+	/**
+	 * This function returns a copy of the map.
+	 * @return cloned Map
+	 */
 	public Map clone()
 	{
 		Map cloned = new Map(map);
@@ -169,6 +217,11 @@ public class Map
 		return cloned;		
 	}
 
+	/**
+	 * 
+	 * @param ogreNumber ogre's number in the enemies array
+	 * @return ogre position
+	 */
 	public int[] getOgrePos(int ogreNumber) 
 	{
 		int[] ogrePos = new int[ogreNumber * 2];

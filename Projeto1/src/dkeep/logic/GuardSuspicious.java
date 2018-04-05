@@ -20,17 +20,31 @@ public class GuardSuspicious extends Enemy
 	private boolean reverse = false;
 	private int way = NORMAL;
 	
+	/**
+	* Suspicious guard constructor. The suspicious guard starts walking in the opposite direction randomly.
+	* @param xpos Initial position on the x axis
+	* @param ypos Initial position on the y axis
+	*/
 	public GuardSuspicious(int xpos, int ypos)
 	{
 		super(xpos,ypos,Game.GUARD);
 	}
 	
+	/**
+	* Function the generate a random number.
+	* @param rng Random object
+	* @param max Maximum value of the random number
+	* @return random integer smaller then the max argument
+	*/
 	private int randomInt (Random rng, int max) 
 	{
 		int r = rng.nextInt(max);
 		return r;
 	}
 	
+	/**
+	* This function changes the guard's direction by changing the way attribute to its symmetric value 
+	*/
 	private void reverseMov() 
 	{
 		if (reverse) 
@@ -45,6 +59,10 @@ public class GuardSuspicious extends Enemy
 		}
 	}
 	
+	/**
+	* Function to determine next move. It controls the guards movement. Fetches values from movg or movgreverse if he's moving in the opposite way.
+	* @return 'a'-left, 'd'-right, 'w'-up or 's'-down
+	*/
 	public char getMove()
 	{
 		char ch = NOT_A_MOVE;
@@ -61,6 +79,9 @@ public class GuardSuspicious extends Enemy
 		return ch;
 	}
 	
+	/**
+	* Function to make the counter which determines the next move to increment unless the guard is asleep. Also determines randomly if the guard will change direction.
+	*/
 	public void advanceGuard()
 	{
 		Random rng = new Random();

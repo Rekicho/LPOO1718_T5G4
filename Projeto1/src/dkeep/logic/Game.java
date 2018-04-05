@@ -58,49 +58,84 @@ public class Game
 	private int ogreNumber;
 	private Map newKeep;
 	
+	/**
+	 * This function changes the dungeon map
+	 * @param keep new map
+	 */
 	public void setKeep(Map keep)
 	{
 		newKeep = keep;
 	}
 	
+	/**
+	 * @return current level
+	 */
 	public int getLevel()
 	{
 		return level;
 	}
 
+	/**
+	 * @return hero (main character)
+	 */
 	public Hero getHero()
 	{
 		return player;
 	}
 	
+	/**
+	 * @return map
+	 */
 	public Map getMap()
 	{
 		return map;
 	}
 
+	/**
+	* This function lets you know what char is on the maps's [x,y] position. 
+	* @param x Position on the x axis
+	* @param y Position on the y axis
+	* @return [x,y] postion's char
+	*/
 	public char getPos(int x, int y)
 	{
 		return map.position(x, y);
 	}
 	
+	/**
+	 * @return array of enemies
+	 */
 	public ArrayList<Enemy> getEnemies() {
 		return enemies;
 	}
 	
+	/**
+	 * @param i enemy's index in the array
+	 * @return enemy's char
+	 */
 	public char getEnemyChar(int i)
 	{
 		return enemies.get(i).getCaracter();
 	}
 	
+	/**
+	 * @return hero's current char
+	 */
 	public char getPlayerChar()
 	{
 		return player.getCaracter();
 	}
 
+	/**
+	 * @return weapon's array list
+	 */
 	public ArrayList<Weapon> getWeapons() {
 		return ogreClubs;
 	}
 	
+	/**
+	 * Game constructor. It starts a game at level 1 with a random number of ogres.
+	 */
 	public Game()
 	{
 		Random rng = new Random();
@@ -110,6 +145,11 @@ public class Game
 		setupLevel1();		
 	}
 
+	/**
+	 * Game constructor. It starts a game at level 1 with a on number of ogres and with a dif difficulty.
+	 * @param on number of ogres
+	 * @param dif game difficulty (1-Rookie guard 2-Drunken guard 3-Suspicious guard)
+	 */
 	public Game(int on, char dif)
 	{
 		ogreNumber = on;
@@ -118,6 +158,11 @@ public class Game
 		selectDifficulty(dif);
 	}
 	
+	/**
+	 * Game constructor. It starts a game at level l with a on number of ogres.
+	 * @param on number of ogres
+	 * @param l level
+	 */
 	public Game(int on, int l)
 	{
 		ogreNumber = on;
@@ -150,6 +195,13 @@ public class Game
 		enemies.add(new Ogre(enemyPos[0],enemyPos[1]));
 	}
 	
+	/**
+	 * Game constructor. It starts a game at level level with a customized map, with the hero at heroPos position and the enemy at enemyPos position.
+	 * @param level game's starting level
+	 * @param map game's map
+	 * @param heroPos hero's position
+	 * @param enemyPos enemy's position
+	 */
 	public Game(int level, char[][] map, int[] heroPos, int[] enemyPos)
 	{
 		this.level = level;
@@ -168,6 +220,10 @@ public class Game
 		return (map.position(pos[0] + speed[0], pos[1] + speed[1]) == STAIR);
 	}
 
+	/**
+	 * This function check if the next move is valid. This means that you can't walk the hero through a wall, for example. 
+	 * @return true if valid / false if invalid
+	 */
 	public boolean checkValidMove(Person p)
 	{
 		int[] pos = p.getPosition();
@@ -185,6 +241,10 @@ public class Game
 		return (map.position(pos[0] + speed[0], pos[1] + speed[1]) == KEY);
 	}
 
+	/**
+	 * It moves a person.
+	 * @param p person to move
+	 */
 	public void move(Person p)
 	{
 		int[] pos;
@@ -225,6 +285,10 @@ public class Game
 		}
 	}
 	
+	/**
+	 * Selects the difficulty (1-Rookie guard 2-Drunken guard 3-Suspicious guard).
+	 * @param i
+	 */
 	public void selectDifficulty(char i) {
 		Enemy enemy;
 
@@ -293,6 +357,11 @@ public class Game
 		return flag;		
 	}
 	
+	/**
+	 * This function starts the level 1.
+	 * @param ch movement
+	 * @return integer to determine if you won, you lost or you'll keep playing
+	 */
 	public int level1(char ch) 
 	{
 		Enemy enemy = enemies.get(0);
@@ -502,6 +571,9 @@ public class Game
 		}
 	}
 
+	/**
+	 * Function to start level 2.
+	 */
 	public void setupLevel2()
 	{
 		club = false;
@@ -695,7 +767,12 @@ public class Game
 		return flag;
 	}
 	
-	//TODO: Refactor
+	/**
+	 * It starts a customized level 2.
+	 * @param ch movement
+	 * @param ogreNeedsMove blocks ogres movement
+	 * @return integer to determine if you won, you lost or you'll keep playing
+	 */
 	public int level2(char ch, boolean ogreNeedsMove) 
 	{
 		Random rng = new Random();
@@ -739,6 +816,11 @@ public class Game
 		return proximo;
 	}
 
+	/**
+	 * Selects the level
+	 * @param ch movement
+	 * @return exit code
+	 */
 	public int gameLogic(char ch)
 	{
 		if (level == 1)
@@ -750,6 +832,10 @@ public class Game
 		return 0;		
 	}
 
+	/**
+	* This function is used to convert the game's map matrix to text so that it can be printed.
+	* @return string of the map
+	*/
 	public String toString()
 	{
 		return map.toString();
