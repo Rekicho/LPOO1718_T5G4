@@ -17,7 +17,7 @@ public class TestOgreMovement {
 		boolean left = false, right = false, up = false, down = false;
 		int i = 0;
 		int state;
-		while(!(left && right && up && down) && i < 1000) {
+		while(!(left && right && up && down) && i < 100) {
 			ogrePos = game.getEnemies().get(0).getPosition().clone();
 			
 			if(i % 2 == 0)
@@ -53,7 +53,7 @@ public class TestOgreMovement {
 		boolean left = false, right = false, up = false, down = false;
 		int i = 0;
 		int state;
-		while(!(left && right && up && down) && i < 1000) {
+		while(!(left && right && up && down) && i < 100) {
 			ogrePos = game.getEnemies().get(0).getPosition();
 			
 			if(i % 2 == 0)

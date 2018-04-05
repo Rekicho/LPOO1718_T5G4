@@ -15,7 +15,7 @@ public class TestGuardPersonality {
 		int i = 0;
 		char guard;
 		
-		while(!asleep && i < 1000) {
+		while(!asleep && i < 100) {
 			
 			if(i % 2 == 0)
 				game.level1('d');
@@ -42,7 +42,7 @@ public class TestGuardPersonality {
 		char guard;
 		int[] lastPos = game.getEnemies().get(0).getPosition().clone();
 		
-		while(!flag && i < 1000) {
+		while(!flag && i < 100) {
 			
 			if(i % 2 == 0)
 				game.level1('d');
@@ -77,7 +77,7 @@ public class TestGuardPersonality {
 		int i = 0;
 		int[] lastPos = game.getEnemies().get(0).getPosition().clone();
 		
-		while(!flag && i < 1000) {
+		while(!flag && i < 100) {
 			
 			if(i % 2 == 0) {
 				game.level1('d');
