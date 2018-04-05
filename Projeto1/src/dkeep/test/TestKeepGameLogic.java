@@ -9,7 +9,7 @@ import dkeep.logic.Game;
 public class TestKeepGameLogic {
 	
 	char[][] map2 = {{'X','X','X','X','X'},
-					{'X','H',' ','O','X'},
+					{'X','H',' ','0','X'},
 					{'I',' ',' ',' ','X'},
 					{'I','k',' ',' ','X'},
 					{'X','X','X','X','X'}};

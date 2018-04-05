@@ -7,9 +7,6 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import dkeep.logic.Game;
-import dkeep.logic.Ogre;
-
-import org.junit.Test;
 
 public class TestOgreMovement {
 
@@ -19,7 +16,7 @@ public class TestOgreMovement {
 		int[] ogrePos, ogreCurrentPos;
 		boolean left = false, right = false, up = false, down = false;
 		int i = 0;
-		while(!(left && right && up && down) && i < 100) {
+		while(!(left && right && up && down) && i < 1000) {
 			ogrePos = game.getEnemies().get(0).getPosition().clone();
 			
 			if(i % 2 == 0)
@@ -53,7 +50,7 @@ public class TestOgreMovement {
 		int[] ogrePos, clubPos;
 		boolean left = false, right = false, up = false, down = false;
 		int i = 0;
-		while(!(left && right && up && down) && i < 100) {
+		while(!(left && right && up && down) && i < 1000) {
 			ogrePos = game.getEnemies().get(0).getPosition();
 			
 			if(i % 2 == 0)
