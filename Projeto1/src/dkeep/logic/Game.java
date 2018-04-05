@@ -222,6 +222,7 @@ public class Game
 
 	/**
 	 * This function check if the next move is valid. This means that you can't walk the hero through a wall, for example. 
+	 * @param p Person
 	 * @return true if valid / false if invalid
 	 */
 	public boolean checkValidMove(Person p)
@@ -287,7 +288,7 @@ public class Game
 	
 	/**
 	 * Selects the difficulty (1-Rookie guard 2-Drunken guard 3-Suspicious guard).
-	 * @param i
+	 * @param i Guard Personality
 	 */
 	public void selectDifficulty(char i) {
 		Enemy enemy;
