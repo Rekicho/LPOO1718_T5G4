@@ -17,8 +17,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class Window {
-
+public class Window 
+{
+	private static final int INVALID_STATE = -1;
+	
 	private JFrame frame;
 	private JTextField textField;
 	private JLabel lblState;
@@ -26,7 +28,7 @@ public class Window {
 	private MapGraphics mapa;
 	private JLabel lblNumberOfOgres;
 	private JLabel lblGuardPersonality;
-	private JComboBox comboBox;
+	private JComboBox<String> comboBox;
 	private JButton btnExit;
 	private JButton btnNewGame;
 	private JButton btnEditKeepLevel;
@@ -40,9 +42,8 @@ public class Window {
 	private int state;
 	private Map level2map;
 	private Map level2validmap;
-	/**
-	 * Launch the application.
-	 */
+	
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -56,32 +57,50 @@ public class Window {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
-	public Window() {
+
+	public Window() 
+	{
 		level2map = new Map(2);
-		state = -1;
+		state = INVALID_STATE;
 		initialize();
 	}
-	
-	private void checkGameState()
+
+	private void disableMovementButtons() 
 	{
-		if(state != 0) 
-		{
-			if (state == 1) {
-				lblState.setText("You Lost!");
-			}
-			if (state == 2) {
-				lblState.setText("You Won!");
-			}
-			
-		game = null;
 		btnDown.setEnabled(false);
 		btnRight.setEnabled(false);
 		btnLeft.setEnabled(false);
 		btnUp.setEnabled(false);
+	}
+	
+	private boolean checkStillPlaying()
+	{
+		if(state != Game.PLAYING) 
+		{
+			if (state == Game.GAMEOVER) 
+			{
+				lblState.setText("You Lost!");
+			}
+			if (state == Game.WIN) 
+			{
+				lblState.setText("You Won!");
+			}
+		
+			disableMovementButtons();
+			
+			return false;
 		}
+		
+		return true;
+	}
+	
+	private void checkGameState()
+	{
+		boolean playing = checkStillPlaying();
+		
+		if (!playing)
+			game = null;
+		
 		frame.repaint();
 		frame.requestFocusInWindow();
 	}
@@ -95,6 +114,22 @@ public class Window {
 		frame.getContentPane().setLayout(null);
 	}
 	
+	private void changeEditedMap()
+	{
+		level2validmap = level2map.clone();
+		
+		if(game == null)
+			lblState.setText("Keep map edited!");
+		
+		else if(game.getLevel() != 2)
+		{
+			game.setKeep(level2validmap.clone());
+			lblState.setText("Keep map edited!");
+		}
+		
+		else lblState.setText("Can't edit Keep while playing it, it will be changed for next game!");
+	}
+	
 	private void createEdit()
 	{
 		edit = new Edit(level2map);
@@ -104,26 +139,12 @@ public class Window {
 	            public void windowClosed(WindowEvent e) 
 	            {
 	            	if(level2map.checkValid())
-	            	{
-	            		level2validmap = level2map.clone();
-	            		
-	            		if(game == null)
-	            			lblState.setText("Keep map edited!");
-	            		
-	            		else if(game.getLevel() != 2)
-	            		{
-	            			game.setKeep(level2validmap.clone());
-	            			lblState.setText("Keep map edited!");
-	            		}
-	            		
-	            		else lblState.setText("Can't edit Keep while playing it, it will be changed for next game!");
-	            	}
+	            		changeEditedMap();
 	            	
 	            	else lblState.setText("Edited map isn't valid! Keep map wasn't changed!");
 	                frame.setVisible(true);
 	                frame.requestFocusInWindow();
 	            }
-
 	        });
 	}
 	
@@ -229,7 +250,7 @@ public class Window {
 	{
 		String[] options = {"Rookie","Drunken","Suspicious"};
 		
-		comboBox = new JComboBox(options);
+		comboBox = new JComboBox<String>(options);
 		comboBox.setBounds(123, 45, 132, 16);
 		frame.getContentPane().add(comboBox);
 	}
@@ -253,6 +274,33 @@ public class Window {
 		frame.getContentPane().add(lblState);
 	}
 	
+	private char selectDifficulty()
+	{
+		String difs = (String) comboBox.getSelectedItem();
+		
+		if (difs=="Rookie") 
+			return Game.ROOKIE;
+		
+		if (difs == "Drunken")
+			return Game.DRUNKEN;
+		
+		else return Game.SUSPICIOUS;
+	}
+	
+	private void gameStart()
+	{
+		if(level2validmap != null)
+			game.setKeep(level2validmap.clone());
+		
+		state = 0;
+		mapa.setMap(game.getMap());
+		lblState.setText("You can move!");
+		
+		btnDown.setEnabled(true);
+		btnRight.setEnabled(true);
+		btnLeft.setEnabled(true);
+		btnUp.setEnabled(true);
+	}
 	private void createNewGame()
 	{
 		btnNewGame = new JButton("New Game");
@@ -261,31 +309,15 @@ public class Window {
 				String ons = textField.getText();
 				int on = Integer.parseInt(ons);
 				
-				if (on < 0 || on > 5) {
+				if (on < 0 || on > Game.MAX_OGRE)
 					return;
-				}
 				
-				String difs = (String) comboBox.getSelectedItem();
-				char difc;
-				
-				if (difs=="Rookie") {
-					difc = '1';
-				} else if (difs == "Drunken") {
-					difc = '2';
-				} else {
-					difc = '3';
-				}
+				char difc = selectDifficulty();
 				
 				game = new Game(on, difc);
-				if(level2validmap != null)
-					game.setKeep(level2validmap.clone());
-				state = 0;
-				mapa.setMap(game.getMap());
-				lblState.setText("You can move!");
-				btnDown.setEnabled(true);
-				btnRight.setEnabled(true);
-				btnLeft.setEnabled(true);
-				btnUp.setEnabled(true);
+				
+				gameStart();
+				
 				frame.repaint();
 				frame.requestFocusInWindow();
 			}
@@ -308,63 +340,48 @@ public class Window {
 		frame.getContentPane().add(btnEditKeepLevel);
 	}
 	
+	private void moveKey(int key)
+	{
+		switch(key)
+		{
+		case KeyEvent.VK_W:
+		case KeyEvent.VK_UP:
+			state = game.gameLogic('w');
+			break;
+		case KeyEvent.VK_A:
+		case KeyEvent.VK_LEFT:
+			state = game.gameLogic('a');
+			break;
+		case KeyEvent.VK_D:
+		case KeyEvent.VK_RIGHT:
+			state = game.gameLogic('d');
+			break;
+		case KeyEvent.VK_S:
+		case KeyEvent.VK_DOWN:
+			state = game.gameLogic('s');
+			break;
+		}
+	}
 	private void createKeyListener()
 	{
 		frame.addKeyListener(new KeyAdapter() 
 		{
 			public void keyReleased(KeyEvent e) 
 			{
-				if(state != 0)
+				if(state != Game.PLAYING)
 					return;
 				
-				int key = e.getKeyCode();
+				moveKey(e.getKeyCode());
+				checkStillPlaying();
 				
-				switch(key)
-				{
-				case KeyEvent.VK_W:
-				case KeyEvent.VK_UP:
-					state = game.gameLogic('w');
-					break;
-				case KeyEvent.VK_A:
-				case KeyEvent.VK_LEFT:
-					state = game.gameLogic('a');
-					break;
-				case KeyEvent.VK_D:
-				case KeyEvent.VK_RIGHT:
-					state = game.gameLogic('d');
-					break;
-				case KeyEvent.VK_S:
-				case KeyEvent.VK_DOWN:
-					state = game.gameLogic('s');
-					break;
-				
-				default: return;
-				}
-
-				if(state != 0) 
-				{
-					if (state == 1) {
-						lblState.setText("You Lost!");
-					}
-					if (state == 2) {
-						lblState.setText("You Won!");
-					}
-					
-					btnDown.setEnabled(false);
-					btnRight.setEnabled(false);
-					btnLeft.setEnabled(false);
-					btnUp.setEnabled(false);
-				}
 				mapa.setMap(game.getMap());
 				frame.repaint();
 			}
 		});
 	}
 	
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {	
+	private void initialize() 
+	{	
 		createFrame();
 		createMapa();
 		createNewGame();

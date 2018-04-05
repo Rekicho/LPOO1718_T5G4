@@ -12,9 +12,6 @@ import dkeep.logic.Map;
 
 public class MapGraphics extends JPanel 
 {
-	/**
-	 * Default value - just so eclipse doesn't signal an warning
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private Map mapa;
