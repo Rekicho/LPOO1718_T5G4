@@ -6,10 +6,6 @@ import java.util.Arrays;
 
 public class Game 
 {
-	private static final char ARMED_HERO = 'A';
-	private static final char HERO_WITH_KEY = 'K';
-	private static final char HIDDEN_KEY = '$';
-	
 	public static final char HERO = 'H';
 	public static final char GUARD = 'G';
 	public static final char SLEEPING = 'g';
@@ -21,6 +17,9 @@ public class Game
 	public static final char DOOR = 'I';
 	public static final char STAIR = 'S';
 	public static final char KEY = 'k';
+	public static final char ARMED_HERO = 'A';
+	public static final char HERO_WITH_KEY = 'K';
+	public static final char HIDDEN_KEY = '$';
 	
 	public static final char ROOKIE = '1';
 	public static final char DRUNKEN = '2';
